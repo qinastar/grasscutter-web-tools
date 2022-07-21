@@ -3,7 +3,13 @@ module.exports = {
     'eslint:recommended',
     'airbnb'
   ],
+  globals: {
+    window: true,
+    document: true,
+  },
   rules: {
+    'import/no-import-module-exports': 'off',
+    'no-console': 'warn',
     'no-nested-ternary': 'warn',
     'import/no-unresolved': 'off',
     'import/extensions': 'off',

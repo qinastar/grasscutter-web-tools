@@ -3,4 +3,27 @@
 @import "./size";
 @import "./fonts";
 
+body, html, #root {
+  margin: 0;
+  height: 100%;
+}
+
+.gwt-main-layout {
+  height: 100%;
+  .gwt-main-header {
+    padding: 0 $width-6;
+    .gwt-main-title {
+      color: $white;
+    }
+  }
+  .gwt-page-layout {
+    height: 100%;
+    overflow: hidden;
+    .gwt-page-content {
+      width: 100%;
+      overflow: auto;
+      padding: $width-2 $width-4;
+    }
+  }
+}
 
