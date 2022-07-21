@@ -1,0 +1,43 @@
+// AntDesig font-family
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+SimSun, sans-serif;
+
+// AntDesign font-weight
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+
+$font-weight: $font-weight-regular;
+$font-weight-header: $font-weight-medium;
+$font-weight-border: $font-weight-semibold;
+
+// AntDesign font-size
+$font-size-1: 12px;
+$font-size-2: 14px;
+$font-size-3: 16px;
+$font-size-4: 20px;
+$font-size-5: 24px;
+$font-size-6: 30px;
+$font-size-7: 38px;
+$font-size-8: 46px;
+$font-size-9: 56px;
+$font-size-10: 68px;
+
+$font-size-small: $font-size-1;
+$font-size-base: $font-size-2;
+$font-size-middle: $font-size-3;
+$font-size-big: $font-size-4;
+$font-size-huge: $font-size-5;
+
+// AntDesign line-height
+$line-height-1: $font-size-1 + 8px;
+$line-height-2: $font-size-2 + 8px;
+$line-height-3: $font-size-3 + 8px;
+$line-height-4: $font-size-4 + 8px;
+$line-height-5: $font-size-5 + 8px;
+$line-height-6: $font-size-6 + 8px;
+$line-height-7: $font-size-7 + 8px;
+$line-height-8: $font-size-8 + 8px;
+$line-height-9: $font-size-9 + 8px;
+$line-height-10: $font-size-10 + 8px;

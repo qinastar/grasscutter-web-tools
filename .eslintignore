@@ -1,0 +1,12 @@
+.idea/**
+.vscode/**
+public/**
+build/**
+craco.config.js
+src/styles/**
+src/images/**
+src/index.js
+src/reportWebVitals.js
+src/setupTests.js
+webpack.config.*.js
+*.DS_Store
