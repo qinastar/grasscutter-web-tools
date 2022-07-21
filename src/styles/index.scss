@@ -1,4 +1,3 @@
-@import '~antd/dist/antd.css';
 @import "./color";
 @import "./size";
 @import "./fonts";
@@ -11,6 +10,7 @@ body, html, #root {
 .gwt-main-layout {
   height: 100%;
   .gwt-main-header {
+    border-bottom: 1px solid $grey-8;
     padding: 0 $width-6;
     .gwt-main-title {
       color: $white;

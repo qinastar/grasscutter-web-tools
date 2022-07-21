@@ -1,9 +1,22 @@
 import { combineReducers, createSlice } from '@reduxjs/toolkit';
 
-export const globalNavMenuReducer = createSlice({
+export const GlobalNavMenuReducer = createSlice({
   name: 'globalNavMenu',
   initialState: {
     siderCollapsed: false,
+    menuOpenKeys: [],
+  },
+  reducers: {
+    update: (state, action) => {
+      return { ...state, ...action.payload };
+    },
+  },
+});
+export const GrasscutterConnectionReducer = createSlice({
+  name: 'grasscutterConnection',
+  initialState: {
+    wssUrl: '',
+    autoConn: false,
   },
   reducers: {
     update: (state, action) => {
@@ -13,7 +26,8 @@ export const globalNavMenuReducer = createSlice({
 });
 
 const GlobalReducerRoot = combineReducers({
-  globalNavMenu: globalNavMenuReducer.reducer,
+  globalNavMenu: GlobalNavMenuReducer.reducer,
+  grasscutterConnection: GrasscutterConnectionReducer.reducer,
 });
 
 export default GlobalReducerRoot;

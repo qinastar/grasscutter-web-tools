@@ -2,12 +2,22 @@ const path = require('path');
 // const { ESLINT_MODES } = require("@craco/craco");
 const webpack = require("webpack");
 const WebpackBar = require('webpackbar');
+const darkTheme = require('@ant-design/dark-theme').default;
+const CracoAntdPlugin = require('craco-antd');
 
 module.exports = {
   eslint: {
     enable: false,
     // mode: ESLINT_MODES.file
   },
+  plugins: [
+    {
+      plugin: CracoAntdPlugin,
+      options: {
+        customizeTheme: darkTheme,
+      },
+    },
+  ],
   webpack: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -16,10 +26,9 @@ module.exports = {
       "@views": path.resolve(__dirname, "src/views"),
     },
     plugins: [
-      // ...
       new webpack.ProgressPlugin(),
       new WebpackBar()
-    ]
+    ],
   },
   jest: {
     configure: {

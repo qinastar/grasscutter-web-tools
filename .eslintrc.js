@@ -3,6 +3,10 @@ module.exports = {
     'eslint:recommended',
     'airbnb'
   ],
+  parserOptions: {
+    sourceType: 'module',
+    ecmaVersion: 2020,
+  },
   globals: {
     window: true,
     document: true,
