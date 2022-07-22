@@ -44,12 +44,11 @@ const navItems = [
 
 export function AppSider() {
   const dispatch = useDispatch();
-  const siderCollapsed = useSelector((state) => state.global.globalNavMenu.siderCollapsed);
-  const menuOpenKeys = useSelector((state) => state.global.globalNavMenu.menuOpenKeys);
+  const globalNavMenuConf = useSelector((state) => state.global?.globalNavMenu ?? {});
 
   return <Layout.Sider
     collapsible
-    collapsed={siderCollapsed}
+    collapsed={globalNavMenuConf?.siderCollapsed}
     onCollapse={(value) => {
       dispatch(GlobalNavMenuReducer.actions.update({
         siderCollapsed: value,
@@ -60,7 +59,7 @@ export function AppSider() {
       theme="dark"
       mode="inline"
       items={navItems}
-      openKeys={menuOpenKeys}
+      openKeys={globalNavMenuConf?.menuOpenKeys ?? []}
       onOpenChange={(openKeys) => {
         dispatch(GlobalNavMenuReducer.actions.update({
           menuOpenKeys: openKeys,

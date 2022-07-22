@@ -1,16 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout } from 'antd';
 import { HomePage } from '@views/global/home';
 import { AppSider } from '@views/global/sider';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { GrasscutterConnectionReducer } from '@/store/global';
 
 function App() {
   const dispatch = useDispatch();
+  const GCConnProfile = useSelector((state) => state.global?.grasscutterConnection ?? {});
+
+  useEffect(() => {
+    window.GCManageClient.subscribe('main', (type, data) => {
+      switch (type) {
+        case 'connect':
+
+          break;
+        default:
+      }
+    });
+    // 自动连接
+    if (GCConnProfile?.autoConn && GCConnProfile?.wssUrl) {
+      window.GCManageClient.connect(GCConnProfile?.wssUrl);
+    }
+    return () => {
+      window.GCManageClient.unsubscribe('main');
+    };
+  });
+
   const startConnect = (wssUrl, autoConn) => {
-    dispatch(GrasscutterConnectionReducer.actions.update({
-      wssUrl, autoConn,
-    }));
+    window.GCManageClient.connect(wssUrl, () => {
+      dispatch(GrasscutterConnectionReducer.actions.update({ wssUrl, autoConn }));   // 持久化conn
+    });
   };
 
   return <Layout className="gwt-main-layout">

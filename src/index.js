@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import zhCN from 'antd/es/locale/zh_CN';
 import { ConfigProvider } from 'antd';
 import store from './store';
+import './utils/socket';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

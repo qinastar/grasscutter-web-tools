@@ -10,6 +10,7 @@ module.exports = {
   globals: {
     window: true,
     document: true,
+    WebSocket: true,
   },
   rules: {
     'import/no-import-module-exports': 'off',
@@ -108,14 +109,14 @@ module.exports = {
         ignoreRestSiblings: true,
       }
     ],
-    'no-magic-numbers': [
-      'warn',
-      {
-        enforceConst: true,
-        ignore: [-1, 0, 1],
-        ignoreArrayIndexes: true,
-      }
-    ],
+    // 'no-magic-numbers': [
+    //   'warn',
+    //   {
+    //     enforceConst: true,
+    //     ignore: [-1, 0, 1],
+    //     ignoreArrayIndexes: true,
+    //   }
+    // ],
     'no-warning-comments': [
       'warn',
       {
