@@ -1,27 +1,25 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { createRootReducer } from './reducers';
 
-let preloadedState = {};
+const preloadedState = {};
 
 if (window.localStorage) {
   try {
-    preloadedState = JSON.parse(window.localStorage.getItem('grasscutter-web-tools-profiles') || '{}');
+    preloadedState.settings = JSON.parse(window.localStorage.getItem('grasscutter-web-tools-settings') || '{}');
   } catch (e) {
-    preloadedState = {};
+    // preloadedState.settings = {};
   }
 }
 
 export const store = configureStore({
   reducer: createRootReducer(),
-  preloadedState: preloadedState || {},
+  preloadedState,
 });
 
 store.subscribe(() => {
   const storeState = store.getState();
   if (storeState && window.localStorage) {
-    window.localStorage.setItem('grasscutter-web-tools-profiles', JSON.stringify({
-      global: storeState.global,
-    }));
+    window.localStorage.setItem('grasscutter-web-tools-settings', JSON.stringify(storeState.settings));
   }
 });
 

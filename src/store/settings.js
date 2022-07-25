@@ -25,9 +25,9 @@ export const GrasscutterConnectionReducer = createSlice({
   },
 });
 
-const GlobalReducerRoot = combineReducers({
+const SettingsReducerRoot = combineReducers({
   globalNavMenu: GlobalNavMenuReducer.reducer,
   grasscutterConnection: GrasscutterConnectionReducer.reducer,
 });
 
-export default GlobalReducerRoot;
+export default SettingsReducerRoot;

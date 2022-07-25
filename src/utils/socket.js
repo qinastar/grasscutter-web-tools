@@ -11,12 +11,20 @@ export class GCManagerClient {
     this.cmdMessageHistory = [];
   }
 
-  emitEvent(type, data) {
+  emitEvent(type, eventName, data) {
     this.eventListener.forEach((item) => {
       if (item && isFunction(item.handler)) {
-        item.handler(type, data);
+        item.handler(type, eventName, data);
       }
     });
+  }
+
+  isConnecting() {
+    return this.connState === 1;
+  }
+
+  isConnected() {
+    return this.connState === 2;
   }
 
   messageHandler(eventName, data) {
@@ -47,7 +55,7 @@ export class GCManagerClient {
         const info = JSON.parse(resp.data);
         this.messageHandler(info?.eventName, info?.data);
       } catch (e) {
-        console.error('[WS]收到消息，但解析失败:', data);
+        console.error('[WS]收到消息，但解析失败:', resp.data);
       }
     };
 
@@ -107,6 +115,7 @@ export class GCManagerClient {
   subscribe(key, handler) {
     if (!key) throw new Error('key must be a string');
     if (!handler || !isFunction(handler)) throw new Error('handler must be a function');
+    this.unsubscribe(key);   // 先移除之前的监听器
     this.eventListener.push({ key, handler });
   }
 

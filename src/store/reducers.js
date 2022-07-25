@@ -1,7 +1,9 @@
-import GlobalReducerRoot from '@/store/global';
+import SettingsReducerRoot from '@/store/settings';
+import SystemReducerRoot from '@/store/system';
 
 export const createRootReducer = () => {
   return {
-    global: GlobalReducerRoot,
+    settings: SettingsReducerRoot,
+    system: SystemReducerRoot,
   };
 };

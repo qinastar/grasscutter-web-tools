@@ -9,7 +9,7 @@ import {
   UserOutlined
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { GlobalNavMenuReducer } from '@/store/global';
+import { GlobalNavMenuReducer } from '@/store/settings';
 
 function getItem(label, key, icon, children) {
   return {
@@ -44,7 +44,7 @@ const navItems = [
 
 export function AppSider() {
   const dispatch = useDispatch();
-  const globalNavMenuConf = useSelector((state) => state.global?.globalNavMenu ?? {});
+  const globalNavMenuConf = useSelector((state) => state.settings?.globalNavMenu ?? {});
 
   return <Layout.Sider
     collapsible

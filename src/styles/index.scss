@@ -10,10 +10,34 @@ body, html, #root {
 .gwt-main-layout {
   height: 100%;
   .gwt-main-header {
+    display: flex;
+    flex-direction: row;
     border-bottom: 1px solid $grey-8;
     padding: 0 $width-6;
-    .gwt-main-title {
+    .gwt-header-title {
+      flex: 0 0 $width-15;
       color: $white;
+    }
+    .gwt-header-content {
+      flex: 1 1 auto;
+      text-align: right;
+      position: relative;
+    }
+    .gwt-header-conn-status {
+      padding: 0 $padding-normal;
+      position: absolute;
+      right: 0;
+      cursor: pointer;
+      transition: background-color 500ms;
+      &:hover {
+        background: rgba(255, 255, 255, .15);
+      }
+      &.is-connected {
+        color: $green-4;
+      }
+      &.is-disconnect {
+        color: $red-4;
+      }
     }
   }
   .gwt-page-layout {
@@ -23,6 +47,16 @@ body, html, #root {
       width: 100%;
       overflow: auto;
       padding: $width-2 $width-4;
+      .gwt-pages-home {
+        .system-info-layout {
+          .ant-col {
+            padding: 0 $padding-normal;
+          }
+          .ant-col:nth-child(2) {
+            border-left: 1px solid $grey-10;
+          }
+        }
+      }
     }
   }
 }
