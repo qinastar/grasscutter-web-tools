@@ -35,6 +35,9 @@ body, html, #root {
       &.is-connected {
         color: $green-4;
       }
+      &.is-connecting {
+        color: $yellow-4 !important;
+      }
       &.is-disconnect {
         color: $red-4;
       }
@@ -43,17 +46,52 @@ body, html, #root {
   .gwt-page-layout {
     height: 100%;
     overflow: hidden;
-    .gwt-page-content {
+    .ant-layout-sider, .ant-layout-sider-trigger {
+      border-right: 1px solid $grey-8;
+    }
+    .gwt-page-frame {
+      display: flex;
+      flex-direction: column;
       width: 100%;
-      overflow: auto;
-      padding: $width-2 $width-4;
-      .gwt-pages-home {
-        .system-info-layout {
-          .ant-col {
-            padding: 0 $padding-normal;
-          }
-          .ant-col:nth-child(2) {
-            border-left: 1px solid $grey-10;
+      .gwt-page-console {
+        height: 100%;
+        width: 100%;
+        flex: 0 0 $width-17;
+        border-top: $width-1 double $grey-8;
+        background: $white-2;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        .gwt-page-console-history {
+          flex: 1 1 auto;
+          border: 0;
+          background: $black-1;
+        }
+        .gwt-page-console-input-group {
+          flex: 0 0 auto;
+          display: flex;
+          flex-direction: row;
+        }
+        .gwt-page-console-input {
+          border-right: 0;
+          border-left: 0;
+          border-bottom: 0;
+          border-radius: 0;
+        }
+      }
+      .gwt-page-content {
+        flex: 1 1 auto;
+        width: 100%;
+        overflow: auto;
+        padding: $width-2 $width-4;
+        .gwt-pages-home {
+          .system-info-layout {
+            .ant-col {
+              padding: 0 $padding-normal;
+            }
+            .ant-col:nth-child(2) {
+              border-left: 1px solid $grey-10;
+            }
           }
         }
       }

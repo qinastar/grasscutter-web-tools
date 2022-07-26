@@ -7,6 +7,7 @@ import ConnStatusBar from '@views/global/conn_bar';
 import {
   BrowserRouter, Routes, Route, Navigate 
 } from 'react-router-dom';
+import WebConsole from '@views/global/console';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
 
@@ -15,7 +16,7 @@ function App() {
   const GCConnProfile = useSelector((state) => state.settings?.grasscutterConnection ?? {});
 
   useEffect(() => {
-    window.GCManageClient.subscribe('main', (type, evenName, data) => {
+    window.GCManageClient.subscribe('main', (type, eventName, data) => {
       switch (type) {
         case 'connect':
           dispatch(SystemInfoReducer.actions.setConnState(true));
@@ -25,12 +26,16 @@ function App() {
           break;
         case 'disconnect':
           dispatch(SystemInfoReducer.actions.setConnState(false));
-          dispatch(SystemInfoReducer.actions.setIsConnecting(false));
+          dispatch(SystemInfoReducer.actions.setIsConnecting(eventName === 'error'));
+          break;
+        case 'connecting':
+          dispatch(SystemInfoReducer.actions.setConnState(false));
+          dispatch(SystemInfoReducer.actions.setIsConnecting(true));
           break;
         case 'message':
-          if (evenName === 'BaseData') {
+          if (eventName === 'BaseData') {
             dispatch(SystemInfoReducer.actions.setBaseData(data));
-          } else if (evenName === 'PlayerList') {
+          } else if (eventName === 'PlayerList') {
             dispatch(SystemInfoReducer.actions.setPlayerData(data));
           }
           break;
@@ -60,6 +65,8 @@ function App() {
   };
   const stopConnect = () => {
     window.GCManageClient.close();
+    dispatch(SystemInfoReducer.actions.setConnState(false));
+    dispatch(SystemInfoReducer.actions.setIsConnecting(false));
     dispatch(GrasscutterConnectionReducer.actions.update({ autoConn: false }));   // 持久化conn
   };
 
@@ -73,29 +80,29 @@ function App() {
       </Layout.Header>
       <Layout className="gwt-page-layout">
         <AppSider />
-        <Layout.Content className="gwt-page-content">
-
-          <Routes>
-            <Route path="/" element={<HomePage startConnect={startConnect} stopConnect={stopConnect} />} />
-            <Route path="/system">
-              <Route element={<Navigate to="/system/fav" />} />
-              <Route path="fav" element={<div>fav</div>} />
-              <Route path="scene" element={<div>scene</div>} />
-              <Route path="job" element={<div>scene</div>} />
-              <Route path="banner" element={<div>banner</div>} />
-              <Route path="account" element={<div>account</div>} />
-            </Route>
-            <Route path="/give">
-              <Route path="artifact" element={<div>artifact</div>} />
-              <Route path="weapon" element={<div>weapon</div>} />
-              <Route path="all" element={<div>all</div>} />
-            </Route>
-            <Route path="/avatar">
-              <Route path="character" element={<div>character</div>} />
-              <Route path="monster" element={<div>monster</div>} />
-            </Route>
-          </Routes>
-
+        <Layout.Content className="gwt-page-frame">
+          <Layout.Content className="gwt-page-content">
+            <Routes>
+              <Route path="/" element={<HomePage startConnect={startConnect} stopConnect={stopConnect} />} />
+              <Route path="/system">
+                <Route path="fav" element={<div>fav</div>} />
+                <Route path="scene" element={<div>scene</div>} />
+                <Route path="job" element={<div>scene</div>} />
+                <Route path="banner" element={<div>banner</div>} />
+                <Route path="account" element={<div>account</div>} />
+              </Route>
+              <Route path="/give">
+                <Route path="artifact" element={<div>artifact</div>} />
+                <Route path="weapon" element={<div>weapon</div>} />
+                <Route path="all" element={<div>all</div>} />
+              </Route>
+              <Route path="/avatar">
+                <Route path="character" element={<div>character</div>} />
+                <Route path="monster" element={<div>monster</div>} />
+              </Route>
+            </Routes>
+          </Layout.Content>
+          <WebConsole />
         </Layout.Content>
       </Layout>
     </Layout>

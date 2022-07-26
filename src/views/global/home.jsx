@@ -29,16 +29,21 @@ export function HomePage({ startConnect, stopConnect }) {
   }, [gcSetting]);
 
   useEffect(() => {
-    window.GCManageClient.subscribe('main', (type, en, data) => {
+    window.GCManageClient.subscribe('page_home', (type, en, data) => {
       if (type === 'tick') {
         setTickInfo(data);
       }
     });
+    return () => {
+      window.GCManageClient.unsubscribe('page_home');
+    };
   }, []);
 
   const serverUpTime = (isConnected && !isEmpty(tickInfo))
     ? dayjs.duration(tickInfo.serverUptime) : 0;
-  const memProgress = ((tickInfo.getAllocatedMemory - tickInfo.getFreeMemory) / tickInfo.getAllocatedMemory) * 100;
+  const memProgress = (
+    (tickInfo.getAllocatedMemory - tickInfo.getFreeMemory) / tickInfo.getAllocatedMemory
+  ) * 100;
 
   const confirmConnect = () => {
     if (!wssUrl) {
@@ -56,6 +61,7 @@ export function HomePage({ startConnect, stopConnect }) {
     <Typography.Paragraph>
       <Space>
         {isConnected ? <Button type="danger" onClick={stopConnect}>断开连接</Button> : <Button type="primary" onClick={confirmConnect} loading={isConnecting}>{isConnecting ? '连接中...' : '连接'}</Button>}
+        {isConnecting && <Button type="danger" onClick={stopConnect}>取消连接</Button>}
         <Checkbox
           checked={autoConn}
           disabled={isConnecting || isConnected}

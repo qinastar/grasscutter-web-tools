@@ -1,11 +1,17 @@
 import { message } from 'antd';
-import { isFunction } from 'lodash';
+import { isFunction, noop } from 'lodash';
+import dayjs from 'dayjs';
 
 window.GCServerConnState = 0;  // 0 - closed; 1 - connecting; 2 - connected
+
+const DEFAULT_RETRY_TIMES = 3;
 
 export class GCManagerClient {
   constructor() {
     this.socket = null;
+    this.isError = false;
+    this.retryWorker = null;
+    this.errorRetryTimes = DEFAULT_RETRY_TIMES;
     this.connState = 0;  // 0 - closed; 1 - connecting; 2 - connected
     this.eventListener = [];
     this.cmdMessageHistory = [];
@@ -29,10 +35,12 @@ export class GCManagerClient {
 
   messageHandler(eventName, data) {
     switch (eventName) {
-      case 'cmd_msg':
-        this.cmdMessageHistory.push(data);  // 记录一下历史控制台消息
-        this.emitEvent('message', eventName, data);
+      case 'cmd_msg': {
+        const customMsg = `[${dayjs().format('HH:mm:ss')}] ${data}`;
+        this.cmdMessageHistory.push(customMsg);  // 记录一下历史控制台消息
+        this.emitEvent('message', eventName, customMsg);
         break;
+      }
       case 'tick': // 心跳信息，单独发消息，并且不触发message事件
         this.emitEvent('tick', eventName, data);
         break;
@@ -41,11 +49,13 @@ export class GCManagerClient {
     }
   }
 
-  connect(wssUrl, successCallback) {
-    if (this.socket) {
+  connect(wssUrl, successCallback, isAutoRetry = false) {
+    if (!isAutoRetry && this.socket) {
       this.socket.close();
     }
+    if (!isAutoRetry) this.errorRetryTimes = DEFAULT_RETRY_TIMES;
 
+    this.isError = false;
     this.socket = new WebSocket(wssUrl);
     this.connState = 1;
 
@@ -69,21 +79,28 @@ export class GCManagerClient {
 
     this.socket.onclose = () => {
       this.connState = 0;
-      this.emitEvent('disconnect');   // 断线事件
+      this.emitEvent('disconnect', this.isError ? 'error' : '');   // 断线事件
       console.log('[WS]连接中断!');
       message.info('[WS]连接中断!');
     };
 
     this.socket.onerror = () => {
       this.connState = 0;
-      this.emitEvent('disconnect'); // 断线事件
+      this.isError = true;
+      this.emitEvent('error'); // 断线事件
 
       console.error('[WS]连接失败，等待5秒后重新连接...');
-      message.error('[WS]连接失败，等待5秒后重新连接...');
+      message.error(`[WS]连接失败，等待5秒后重新连接...(${DEFAULT_RETRY_TIMES - this.errorRetryTimes + 1}/${DEFAULT_RETRY_TIMES})`);
 
-      setTimeout(() => {
-        this.connect(wssUrl);
-      }, 5000);
+      if (this.errorRetryTimes > 0) {
+        this.retryWorker = setTimeout(() => {
+          this.emitEvent('connecting');
+          this.connect(wssUrl, noop, true);
+        }, 5000);
+        this.errorRetryTimes--;
+      } else if (this.socket) {
+        this.socket.close();
+      }
     };
   }
 
@@ -107,6 +124,7 @@ export class GCManagerClient {
   }
 
   close() {
+    if (this.retryWorker) clearTimeout(this.retryWorker);
     if (this.socket) {
       this.socket.close();
     }
@@ -121,7 +139,7 @@ export class GCManagerClient {
 
   unsubscribe(key) {
     if (!key) throw new Error('key must be a string');
-    this.eventListener = this.eventListener.filter((item) => item.key === key);
+    this.eventListener = this.eventListener.filter((item) => item.key !== key);
   }
 }
 

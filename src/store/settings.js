@@ -1,10 +1,11 @@
 import { combineReducers, createSlice } from '@reduxjs/toolkit';
 
-export const GlobalNavMenuReducer = createSlice({
-  name: 'globalNavMenu',
+export const UIPreferenceReducer = createSlice({
+  name: 'uiPreference',
   initialState: {
     siderCollapsed: false,
-    menuOpenKeys: [],
+    siderMenuOpenKeys: [],
+    consoleEnterType: 'ctrl+enter',
   },
   reducers: {
     update: (state, action) => {
@@ -26,7 +27,7 @@ export const GrasscutterConnectionReducer = createSlice({
 });
 
 const SettingsReducerRoot = combineReducers({
-  globalNavMenu: GlobalNavMenuReducer.reducer,
+  uiPreference: UIPreferenceReducer.reducer,
   grasscutterConnection: GrasscutterConnectionReducer.reducer,
 });
 

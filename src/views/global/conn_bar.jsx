@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import dayjs  from 'dayjs';
 import {
-  Tag, Popover, Typography, Space 
+  Tag, Popover, Typography, Space, Spin
 } from 'antd';
 import classnames from 'classnames';
 import { DisconnectOutlined, LinkOutlined } from '@ant-design/icons';
@@ -12,6 +12,7 @@ import { humanbytes } from '@/utils/unit';
 function ConnStatusBar() {
   const systemInfo = useSelector((state) => state.system?.systemInfo ?? {});
   const isConnected = systemInfo?.isConnected;
+  const isConnecting = systemInfo?.isConnecting;
   const [tickInfo, setTickInfo] = useState({
     getAllocatedMemory: 0,
     getFreeMemory: 0,
@@ -21,11 +22,14 @@ function ConnStatusBar() {
   });
 
   useEffect(() => {
-    window.GCManageClient.subscribe('main', (type, en, data) => {
+    window.GCManageClient.subscribe('conn_bar', (type, en, data) => {
       if (type === 'tick') {
         setTickInfo(data);
       }
     });
+    return () => {
+      window.GCManageClient.unsubscribe('conn_bar');
+    };
   }, []);
 
   const serverUpTime = (isConnected && !isEmpty(tickInfo))
@@ -33,9 +37,9 @@ function ConnStatusBar() {
 
   return !isConnected
     ? <div
-        className={classnames('gwt-header-conn-status', { 'is-connected': isConnected, 'is-disconnect': !isConnected })}
+        className={classnames('gwt-header-conn-status', { 'is-connected': isConnected, 'is-disconnect': !isConnected, 'is-connecting': isConnecting })}
     >
-      <DisconnectOutlined /> 服务端已断开
+      {isConnecting ? <><Spin /> 服务器连接中...</> : <><DisconnectOutlined /> 服务端已断开</>}
     </div> : <Popover
       title="运行状态"
       placement="bottomRight"

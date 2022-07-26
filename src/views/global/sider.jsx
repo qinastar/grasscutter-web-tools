@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
-import { GlobalNavMenuReducer } from '@/store/settings';
+import { UIPreferenceReducer } from '@/store/settings';
 
 function getItem(label, key, icon, children) {
   return {
@@ -43,7 +43,7 @@ const navItems = [
 
 export function AppSider() {
   const dispatch = useDispatch();
-  const globalNavMenuConf = useSelector((state) => state.settings?.globalNavMenu ?? {});
+  const uiPreferenceConf = useSelector((state) => state.settings?.uiPreference ?? {});
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -54,9 +54,9 @@ export function AppSider() {
 
   return <Layout.Sider
     collapsible
-    collapsed={globalNavMenuConf?.siderCollapsed}
+    collapsed={uiPreferenceConf?.siderCollapsed}
     onCollapse={(value) => {
-      dispatch(GlobalNavMenuReducer.actions.update({
+      dispatch(UIPreferenceReducer.actions.update({
         siderCollapsed: value,
       }));
     }}
@@ -67,10 +67,10 @@ export function AppSider() {
       items={navItems}
       onSelect={handleMenuSelect}
       selectedKeys={[pathname]}
-      openKeys={globalNavMenuConf?.menuOpenKeys ?? []}
+      openKeys={uiPreferenceConf?.siderMenuOpenKeys ?? []}
       onOpenChange={(openKeys) => {
-        dispatch(GlobalNavMenuReducer.actions.update({
-          menuOpenKeys: openKeys,
+        dispatch(UIPreferenceReducer.actions.update({
+          siderMenuOpenKeys: openKeys,
         }));
       }}
     />
