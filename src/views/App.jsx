@@ -4,7 +4,9 @@ import { HomePage } from '@views/global/home';
 import { AppSider } from '@views/global/sider';
 import { useDispatch, useSelector } from 'react-redux';
 import ConnStatusBar from '@views/global/conn_bar';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter, Routes, Route, Navigate 
+} from 'react-router-dom';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
 
@@ -76,8 +78,21 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage startConnect={startConnect} stopConnect={stopConnect} />} />
             <Route path="/system">
+              <Route element={<Navigate to="/system/fav" />} />
               <Route path="fav" element={<div>fav</div>} />
               <Route path="scene" element={<div>scene</div>} />
+              <Route path="job" element={<div>scene</div>} />
+              <Route path="banner" element={<div>banner</div>} />
+              <Route path="account" element={<div>account</div>} />
+            </Route>
+            <Route path="/give">
+              <Route path="artifact" element={<div>artifact</div>} />
+              <Route path="weapon" element={<div>weapon</div>} />
+              <Route path="all" element={<div>all</div>} />
+            </Route>
+            <Route path="/avatar">
+              <Route path="character" element={<div>character</div>} />
+              <Route path="monster" element={<div>monster</div>} />
             </Route>
           </Routes>
 

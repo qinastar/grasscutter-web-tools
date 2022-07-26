@@ -34,8 +34,8 @@ const navItems = [
     getItem('其他', '/give/all')
   ]),
   getItem('角色指令', '/avatar', <UserOutlined />, [
-    getItem('原神', '/avatar/character'),
-    getItem('原魔', '/avatar/monster')
+    getItem('角色', '/avatar/character'),
+    getItem('怪物', '/avatar/monster')
   ])
   // getItem('控制台', '/console', <CodeOutlined />),
   // getItem('设置', '/setting', <SettingOutlined />)
