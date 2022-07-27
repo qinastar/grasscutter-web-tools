@@ -1,5 +1,6 @@
 import React, {
-  useEffect, useMemo, useRef, useState 
+  useCallback,
+  useEffect, useMemo, useRef, useState
 } from 'react';
 import { Input, Menu, Dropdown } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
@@ -45,17 +46,24 @@ function WebConsole() {
     current.scrollTop = current.scrollHeight;
   }, [historyText]);
 
-  const sendCMD = () => {
-    window.GCManageClient.sendCMD(commandText);
+  const sendCMD = useCallback(() => {
+    if (commandText === '/clear') {
+      window.GCManageClient.cmdMessageHistory.splice(
+        0,
+        window.GCManageClient.cmdMessageHistory.length
+      );
+      setConsoleHistory([]);
+    } else {
+      window.GCManageClient.sendCMD(commandText);
+    }
     setCommandText('');
-  };
+  }, [commandText]);
 
   const handleKeyUp = (e) => {
     let isEnter = (e.metaKey || e.ctrlKey) && (e.code === 'Enter' || e.keyCode === 13);
     if (cmdInputConfirmType === 'enter') isEnter = (e.code === 'Enter' || e.keyCode === 13);
     if (isEnter) {
-      window.GCManageClient.sendCMD(commandText);
-      setCommandText('');
+      sendCMD();
     }
   };
 
@@ -92,12 +100,7 @@ function WebConsole() {
         value={commandText}
         onChange={(e) => setCommandText(e.target.value)}
         onKeyDown={handleKeyUp}
-        // addonAfter={<Select value={cmdInputConfirmType}>
-        //   <Select.Option value="ctrl+enter">Ctrl+Enter或Cmd+Enter发送</Select.Option>
-        //   <Select.Option value="enter">Enter发送</Select.Option>
-        // </Select>}
       />
-
       <Dropdown.Button size="large" overlay={sendMenu} type="primary" onClick={sendCMD}>发送</Dropdown.Button>
     </div>
   </div>;

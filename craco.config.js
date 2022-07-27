@@ -23,6 +23,7 @@ module.exports = {
       "@": path.resolve(__dirname, "src"),
       "@styles": path.resolve(__dirname, "src/styles"),
       "@images": path.resolve(__dirname, "src/images"),
+      "@image": path.resolve(__dirname, "src/images"),
       "@views": path.resolve(__dirname, "src/views"),
     },
     plugins: [
@@ -36,6 +37,7 @@ module.exports = {
         "@": "<rootDir>/src/$1",
         "@styles": "<rootDir>/src/styles/$1",
         "@images": "<rootDir>/src/images/$1",
+        "@image": "<rootDir>/src/images/$1",
         "@views": "<rootDir>/src/views/$1",
       }
     }

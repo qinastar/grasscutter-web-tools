@@ -6,7 +6,9 @@ craco.config.js
 src/styles/**
 src/images/**
 src/index.js
+src/constants/mona/**
 src/reportWebVitals.js
 src/setupTests.js
 webpack.config.*.js
 *.DS_Store
+lab/**
