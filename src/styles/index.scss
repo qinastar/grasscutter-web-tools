@@ -1,6 +1,5 @@
 @import "./color";
 @import "./size";
-@import "./fonts";
 
 body, html, #root {
   margin: 0;
@@ -82,9 +81,11 @@ body, html, #root {
       .gwt-page-content {
         flex: 1 1 auto;
         width: 100%;
-        overflow: auto;
-        padding: $width-2 $width-4;
+        overflow: hidden;
         .gwt-pages-home {
+          height: 100%;
+          overflow: auto;
+          padding: $width-2 $width-4;
           .system-info-layout {
             .ant-col {
               padding: 0 $padding-normal;

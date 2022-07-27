@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
+import '@styles/give.scss';
 import { Layout } from 'antd';
 import { HomePage } from '@views/global/home';
 import { AppSider } from '@views/global/sider';
 import { useDispatch, useSelector } from 'react-redux';
 import ConnStatusBar from '@views/global/conn_bar';
 import {
-  BrowserRouter, Routes, Route, Navigate 
+  BrowserRouter, Routes, Route
 } from 'react-router-dom';
 import WebConsole from '@views/global/console';
+import GiveArtifactsPage from '@views/give/artifacts';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
 
@@ -92,7 +94,7 @@ function App() {
                 <Route path="account" element={<div>account</div>} />
               </Route>
               <Route path="/give">
-                <Route path="artifact" element={<div>artifact</div>} />
+                <Route path="artifact" element={<GiveArtifactsPage />} />
                 <Route path="weapon" element={<div>weapon</div>} />
                 <Route path="all" element={<div>all</div>} />
               </Route>

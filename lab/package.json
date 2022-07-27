@@ -1,0 +1,20 @@
+{
+  "name": "lab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "artiface_code_mappings.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "artifact": "babel-node --presets env artiface_code_mappings.js\n"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.18.9",
+    "@babel/core": "^7.18.9",
+    "@babel/preset-env": "^7.18.9",
+    "babel-node": "^0.0.1-security",
+    "babel-preset-env": "^1.7.0"
+  }
+}

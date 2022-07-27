@@ -12537,6 +12537,8 @@ const artifact_codes = [
   }
 ];
 
+const monaArtifactMapping = require('./_gen_artifact').default;
+
 const formattedData = [];
 const typeMapping = {
   '1': 'cup',
@@ -12546,9 +12548,7 @@ const typeMapping = {
   '5': 'sand',
 }
 const classifyArtifact = (children) => {
-  const starGroups = {
-
-  };
+  const starGroups = {};
   children.forEach(item => {
     const starNum = parseInt(item.label.replace(/(\d+)星.*/, '$1'), 10);
     const artName = item.label.replace(/\d+星:(.*)/, '$1');
@@ -12571,10 +12571,9 @@ const classifyArtifact = (children) => {
     starGroups[starNum] = starGroup;
   });
   const ret = Object.keys(starGroups).map(key => {
-    return {
-      star: parseInt(key, 10),
-      ...starGroups[key],
-    };
+    const obj = starGroups[key];
+    obj.star = parseInt(key, 10);
+    return obj;
   });
   ret.sort((a, b) => a.star > b.star ? -1 : 1);
   return ret;
@@ -12584,8 +12583,18 @@ artifact_codes.forEach(item => {
   const group = {
     id: item.value,
     name: item.label,
+    key: '',
+    eng: '',
     children: classifyArtifact(item.children),
   };
+  Object.keys(monaArtifactMapping).forEach(key => {
+    if (group.en) return;
+    const a = monaArtifactMapping[key];
+    if (a.chs === item.label) {
+      group.key = key;
+      group.eng = a.eng;
+    }
+  })
   formattedData.push(group);
 });
 
