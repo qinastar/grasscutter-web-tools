@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Form, Layout, Select, Row, Col, InputNumber, Avatar, Rate, Typography, Input, Divider, Menu
 } from 'antd';
@@ -11,7 +11,7 @@ import ArtifactMainAttrs from '@/constants/artifact_main_attrs.json';
 import MonaArtifactMeta from '@/constants/mona/_gen_artifact';
 import {
   ArtifactStarLimitation,
-  ArtifactMainAttrsLimitation
+  ArtifactMainAttrsLimitation, ArtifactLevelLimitation
 } from '@/constants/artifact_limitation';
 
 const ArtifactMainAttrsMap = {};
@@ -143,6 +143,18 @@ function GiveArtifactsPage() {
     }));
   }, [generatorMode, artifactType, artifactTypeSplited]);
 
+  // 当前星级
+  const currentStar = useMemo(() => {
+    return ArtifactStarOptions[artifactStarIndex]?.group?.star;
+  }, [artifactStarIndex, ArtifactStarOptions]);
+  // 星级变更
+  useEffect(() => {
+    if (!generatorMode === 'strict') return;
+    if (artifactLevel > ArtifactLevelLimitation[currentStar]) {
+      setArtifactLevel(ArtifactLevelLimitation[currentStar]);
+    }
+  }, [currentStar]);
+
   // 命令计算
   const calculatedCommand = useMemo(() => {
     if (
@@ -227,7 +239,7 @@ function GiveArtifactsPage() {
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item label="等级">
-                <InputNumber size="large" min={1} max={20} value={artifactLevel} onChange={(val) => setArtifactLevel(val)} style={{ width: '100%' }} />
+                <InputNumber size="large" min={1} max={ArtifactLevelLimitation[currentStar] || 20} value={artifactLevel} onChange={(val) => setArtifactLevel(val)} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={8}>
