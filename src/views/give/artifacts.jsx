@@ -3,14 +3,13 @@ import {
   Form, Layout, Select, Row, Col, InputNumber, Avatar, Rate, Typography, Input, Divider, Menu
 } from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
-import {
-  flatten, get, isArray, isEmpty 
-} from 'lodash';
+import { get, isEmpty } from 'lodash';
+import SubAttrGroup from '@views/give/components/subattr_group';
 import ArtifactGroupsRawData from '@/constants/artifact_groups_map.json';
 import ArtifactMainAttrs from '@/constants/artifact_main_attrs.json';
 import MonaArtifactMeta from '@/constants/mona/_gen_artifact';
 import {
-  ArtifactStarLimitation,
+  ArtifactStarLimitation, DuplicatedArtifact,
   ArtifactMainAttrsLimitation, ArtifactLevelLimitation
 } from '@/constants/artifact_limitation';
 
@@ -38,6 +37,7 @@ function GiveArtifactsPage() {
   const [artifactType, setArtifactType] = useState(null);
   const [artifactLevel, setArtifactLevel] = useState(20);
   const [artifactMainAttr, setArtifactMainAttr] = useState(null);
+  const strictMode = generatorMode === 'strict';
 
   const artifactTypeSplited = useMemo(() => {
     return (artifactType || '_').split('_');
@@ -45,7 +45,10 @@ function GiveArtifactsPage() {
 
   // 圣遗物组
   const ArtifactGroupsOptions = useMemo(() => {
-    return ArtifactGroupsRawData.map((group, index) => {
+    const list = strictMode ? ArtifactGroupsRawData.filter((item) => {
+      return DuplicatedArtifact.indexOf(item.id) === -1;
+    }) : ArtifactGroupsRawData;
+    return list.map((group, index) => {
       const metas = get(MonaArtifactMeta, group.key, {});
       const [ef2, ef4] = [get(metas, 'effect2', ''), get(metas, 'effect4', '')];
       return {
@@ -77,7 +80,7 @@ function GiveArtifactsPage() {
 
     const limitList = get(ArtifactStarLimitation, artGroup.id, []);
 
-    const artStarGroupFiltered = (generatorMode === 'strict')
+    const artStarGroupFiltered = strictMode
       ? artStarGroups.filter((group) => limitList.indexOf(group.star) > -1)
       : artStarGroups;
     return artStarGroupFiltered.map((group, index) => {
@@ -131,7 +134,7 @@ function GiveArtifactsPage() {
   // 主词条计算
   const ArtifactMainAttrsFiltered = useMemo(() => {
     let ret = ArtifactMainAttrs;
-    if (generatorMode === 'strict')  {
+    if (strictMode)  {
       if (!artifactType) return [];
       const validValues = ArtifactMainAttrsLimitation[artifactTypeSplited[1]] || [];
       ret = ArtifactMainAttrs.filter((item) => validValues.indexOf(item.value) > -1);
@@ -149,10 +152,8 @@ function GiveArtifactsPage() {
   }, [artifactStarIndex, ArtifactStarOptions]);
   // 星级变更
   useEffect(() => {
-    if (!generatorMode === 'strict') return;
-    if (artifactLevel > ArtifactLevelLimitation[currentStar]) {
-      setArtifactLevel(ArtifactLevelLimitation[currentStar]);
-    }
+    if (generatorMode !== 'strict') return;
+    setArtifactLevel(ArtifactLevelLimitation[currentStar]);
   }, [currentStar]);
 
   // 命令计算
@@ -162,8 +163,8 @@ function GiveArtifactsPage() {
       || artifactType === null || artifactMainAttr === null
     ) return '';
     const artStarGroup = get(ArtifactStarOptions, `${artifactStarIndex}.group`);
-
-    const artifactCodeList = artStarGroup[artifactTypeSplited[1]] || [];
+    console.log(artifactTypeSplited, 'aaa');
+    const artifactCodeList = get(artStarGroup, artifactTypeSplited[1], []) || [];
 
     const subAttrsList = [];   // TODO 副词条
 
@@ -261,7 +262,15 @@ function GiveArtifactsPage() {
             </Col>
           </Row>
           <Divider />
-          <Divider />
+          {(artifactGroupIndex !== null && artifactStarIndex !== null) ? <>
+            <Typography.Title level={4}>副词条设定</Typography.Title>
+            <SubAttrGroup
+              starLevel={currentStar}
+              artLevel={artifactLevel}
+              strictMode={strictMode}
+            />
+            <Divider />
+          </> : null}
           <Input value={calculatedCommand} placeholder="请先选择词条" />
         </Form>
       </div>

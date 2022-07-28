@@ -1,0 +1,42 @@
+{
+  "102": {
+    "name": "生命值",
+    "percent": false
+  },
+  "103": {
+    "name": "生命值百分比",
+    "percent": true
+  },
+  "105": {
+    "name": "攻击力",
+    "percent": false
+  },
+  "106": {
+    "name": "攻击力百分比",
+    "percent": true
+  },
+  "108": {
+    "name": "防御力",
+    "percent": false
+  },
+  "109": {
+    "name": "防御力百分比",
+    "percent": true
+  },
+  "123": {
+    "name": "元素充能效率",
+    "percent": true
+  },
+  "124": {
+    "name": "元素精通",
+    "percent": false
+  },
+  "120": {
+    "name": "暴击率",
+    "percent": true
+  },
+  "122": {
+    "name": "暴击伤害",
+    "percent": true
+  }
+}
