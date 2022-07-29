@@ -5,8 +5,9 @@ import {
 } from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
 import { get, isEmpty } from 'lodash';
-import SubAttrGroup from '@views/give/components/subattr_group';
+import SubAttrStrict from '@views/give/components/subattr_strict';
 import ArtifactGroupsRawData from '@/constants/artifact_groups_map.json';
+import ArtifactSubAttrsGroupMapping from '@/constants/artifact_sub_attrs_group_map.json';
 import ArtifactMainAttrs from '@/constants/artifact_main_attrs.json';
 import MonaArtifactMeta from '@/constants/mona/_gen_artifact';
 import {
@@ -39,18 +40,22 @@ function GiveArtifactsPage() {
   const [artifactLevel, setArtifactLevel] = useState(20);
   const [artifactMainAttr, setArtifactMainAttr] = useState(null);
   const [subAttrList, setSubAttrList] = useState([]);
+  const [subAttrListFree, setSubAttrListFree] = useState([]);
   const strictMode = generatorMode === 'strict';
 
   const artifactTypeSplit = useMemo(() => {
     return (artifactType || '_').split('_');
   }, [artifactType]);
 
-  // 圣遗物组
-  const ArtifactGroupsOptions = useMemo(() => {
-    const list = strictMode ? ArtifactGroupsRawData.filter((item) => {
+  const ArtifactGroupsRawDataList = useMemo(() => {
+    return strictMode ? ArtifactGroupsRawData.filter((item) => {
       return DuplicatedArtifact.indexOf(item.id) === -1;
     }) : ArtifactGroupsRawData;
-    return list.map((group, index) => {
+  }, [generatorMode, strictMode]);
+
+  // 圣遗物组
+  const ArtifactGroupsOptions = useMemo(() => {
+    return ArtifactGroupsRawDataList.map((group, index) => {
       const metas = get(MonaArtifactMeta, group.key, {});
       const [ef2, ef4] = [get(metas, 'effect2', ''), get(metas, 'effect4', '')];
       return {
@@ -69,12 +74,12 @@ function GiveArtifactsPage() {
         value: index,
       };
     });
-  }, [ArtifactGroupsRawData]);
+  }, []);
 
   // 品质
   const ArtifactStarOptions = useMemo(() => {
     if (artifactGroupIndex === null) return [];
-    const artGroup = ArtifactGroupsRawData[artifactGroupIndex];
+    const artGroup = ArtifactGroupsRawDataList[artifactGroupIndex];
     const artStarGroups = artGroup?.children ?? [];
     if (!isEmpty(artStarGroups)) {
       setArtifactStarIndex(0);
@@ -93,12 +98,12 @@ function GiveArtifactsPage() {
         group,
       };
     });
-  }, [artifactGroupIndex, generatorMode]);
+  }, [artifactGroupIndex, generatorMode, strictMode]);
 
   // 类型
   const ArtifactTypeOptions = useMemo(() => {
     if (artifactGroupIndex === null) return [];
-    const artGroup = ArtifactGroupsRawData[artifactGroupIndex];
+    const artGroup = ArtifactGroupsRawDataList[artifactGroupIndex];
     const artStarGroup = ArtifactStarOptions[artifactStarIndex];
     let firstCode = '';
     const ret = ArtifactTypeOptionsPresets.map((info) => {
@@ -147,7 +152,7 @@ function GiveArtifactsPage() {
       label: `${item.label} (${item.value})`,
       name: item.label,
     }));
-  }, [generatorMode, artifactType, artifactTypeSplit, artifactMainAttr]);
+  }, [generatorMode, strictMode, artifactType, artifactTypeSplit, artifactMainAttr]);
 
   // 获取主词条名称
   const artifactMainAttrName = useMemo(() => {
@@ -160,7 +165,7 @@ function GiveArtifactsPage() {
   }, [artifactStarIndex, ArtifactStarOptions]);
   // 星级变更
   useEffect(() => {
-    if (generatorMode !== 'strict') return;
+    if (strictMode) return;
     setArtifactLevel(ArtifactLevelLimitation[currentStar]);
   }, [currentStar]);
 
@@ -193,8 +198,7 @@ function GiveArtifactsPage() {
     ) return '';
     const artStarGroup = get(ArtifactStarOptions, `${artifactStarIndex}.group`);
     const artifactCodeList = get(artStarGroup, artifactTypeSplit[1], []) || [];
-
-    if (strictMode && sharedWordsCount >= ArtifactSubAttrMaxLimitation[currentStar]) {
+    if (strictMode && sharedWordsCount > ArtifactSubAttrMaxLimitation[currentStar]) {
       return `[error]词条错误，请不要超过${ArtifactSubAttrMaxLimitation[currentStar]}个词条`;
     }
 
@@ -227,6 +231,18 @@ function GiveArtifactsPage() {
     }
     window.GCManageClient.sendCMD(calculatedCommand);
   };
+
+  // 词条预览
+  const subAttrPreviewList = useMemo(() => {
+    if (isEmpty(subAttrList)) return [];
+    return subAttrList.map((item) => {
+      const group = ArtifactSubAttrsGroupMapping[item.group] ?? {};
+      return {
+        name: group?.name,
+        value: item.outputValue,
+      };
+    }).filter((item) => !!item.name);
+  }, [subAttrList]);
 
   return <Layout.Content className="give-artifact-page">
     <div className="main-layout">
@@ -281,7 +297,6 @@ function GiveArtifactsPage() {
                 >
                   {ArtifactTypeOptions}
                 </Select>
-
               </Form.Item>
             </Col>
           </Row>
@@ -309,22 +324,22 @@ function GiveArtifactsPage() {
               </Form.Item>
             </Col>
           </Row>
-          <Divider />
           {(artifactGroupIndex !== null && artifactStarIndex !== null) ? <>
             <Typography.Title level={4}>副词条设定</Typography.Title>
-            <SubAttrGroup
+            <Divider className="no-top-margin" />
+            {strictMode ? <SubAttrStrict
               starLevel={currentStar}
               artLevel={artifactLevel}
               strictMode={strictMode}
               onChange={(s) => setSubAttrList(s)}
               artifactMainAttrName={artifactMainAttrName}
-            />
+            /> : null}
             <Divider />
           </> : null}
         </Form>
       </div>
       <div className="command-layout">
-        <Row flex>
+        <Row>
           <Col flex="1 1 auto">
             <Input size="large" value={calculatedCommand} placeholder="请先选择词条" />
           </Col>
@@ -338,22 +353,10 @@ function GiveArtifactsPage() {
       <div className="preview-layout">
         <Typography.Title level={4}>主词条：{get(ArtifactMainAttrsMap, artifactMainAttr, '未知')}</Typography.Title>
         <Divider />
-        <Typography.Paragraph>
-          <Typography.Text strong>暴击率：</Typography.Text>
-          <Typography.Text>3.9%</Typography.Text>
-        </Typography.Paragraph>
-        <Typography.Paragraph>
-          <Typography.Text strong>暴击伤害：</Typography.Text>
-          <Typography.Text>7.8%</Typography.Text>
-        </Typography.Paragraph>
-        <Typography.Paragraph>
-          <Typography.Text strong>攻击力百分比：</Typography.Text>
-          <Typography.Text>5.1%</Typography.Text>
-        </Typography.Paragraph>
-        <Typography.Paragraph>
-          <Typography.Text strong>攻击力：</Typography.Text>
-          <Typography.Text>19</Typography.Text>
-        </Typography.Paragraph>
+        {subAttrPreviewList.map((item) => <Typography.Paragraph key={item.name}>
+          <Typography.Text strong>{item.name}：</Typography.Text>
+          <Typography.Text>{item.value}</Typography.Text>
+        </Typography.Paragraph>)}
       </div>
       <div className="fav-layout">
         <Typography.Title level={4}>预设圣遗物</Typography.Title>

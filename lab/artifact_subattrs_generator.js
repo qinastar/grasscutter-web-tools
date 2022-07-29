@@ -233,8 +233,23 @@ const genSubAttrsValueTable = (children, isPercent, star) => {
   for (let i = 1; i <= maxDeep; i++) { // 最大强化次数
     const dfs = (items, status, deep) => {
       if (deep > i) {
-        if (!ret.find(t => t.value === status.value)) {  // 裁剪掉数值一样的组合，选择困难症患者福音
-          ret.push(status);
+        // if (!ret.find(t => t.value === status.value)) {  // 裁剪掉数值一样的组合，选择困难症患者福音
+        //   ret.push(status);
+        // }
+        // 这边有个问题，需要找最优的词条数
+        let found = false;
+        ret.forEach((t, index) => {
+          if (found) return;
+          if (t.value === status.value) {
+            // 如果找到了对应项
+            if (status.codes.length < t.codes.length) {
+              ret[index] = status  // 替换
+              found = true;
+            }
+          }
+        })
+        if (!found) {
+          ret.push(status);  // 没有找到对应数值的时候再填数字进去
         }
         return;
       }

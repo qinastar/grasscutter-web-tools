@@ -32,11 +32,13 @@ function SubAttrInput({
       codes,
       group,
       transfer,
+      outputValue,
     });
   }, [
     codes,
     group,
-    transfer
+    transfer,
+    outputValue
   ]);
 
   // 副词条组
@@ -183,11 +185,11 @@ function SubAttrInput({
         </Form.Item>
       </Col>
     </Row>
-    <Row gutter={16}>
+    {group ? <Row gutter={16}>
       {subAttrsWordList.map((wordItem) => {
         return <Col xxl={6} lg={12} md={12} sm={12} xs={12} key={wordItem.value}>
           <Form.Item label={wordItem.label}>
-            {(!transfer && group)
+            {(!transfer)
               ? <InputNumber min={0} onChange={handleSubAttrWordItemCountChange(wordItem.value)} style={{ width: '100%' }} value={codes[wordItem.value]} />
               : <Typography.Text>
                 {codes[wordItem.value]}
@@ -195,7 +197,7 @@ function SubAttrInput({
           </Form.Item>
         </Col>;
       })}
-    </Row>
+    </Row> : null}
   </>;
 }
 

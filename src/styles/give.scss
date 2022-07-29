@@ -39,6 +39,9 @@
           }
         }
       }
+      .ant-divider-horizontal.no-top-margin {
+        margin: 0 0 $width-6 0 !important;
+      }
     }
     .command-layout {
       flex: 0 0 $width-8;
