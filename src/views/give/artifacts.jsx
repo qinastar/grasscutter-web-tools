@@ -110,7 +110,7 @@ function GiveArtifactsPage() {
       const artifactCodeList = get(artStarGroup, `group.${info.value}`) || [];
       if (isEmpty(artifactCodeList)) return null;
       const metas = get(MonaArtifactMeta, artGroup.key, {});
-      const aName = get(metas, `${info.value}.chs`);
+      const aName = get(metas, `${info.value}.chs`) || get(artifactCodeList, '0.name');
       const aAvatar = get(metas, `${info.value}.url`);
       return <Select.OptGroup key={info.value} label={`${aName} - ${info.label}`}>
         {artifactCodeList.map((item) => {
@@ -356,7 +356,7 @@ function GiveArtifactsPage() {
         <Typography.Title level={4}>主词条：{get(ArtifactMainAttrsMap, artifactMainAttr, '未知')}</Typography.Title>
         <Divider />
         {subAttrPreviewList.length
-          ? subAttrPreviewList.map((item) => <Typography.Paragraph key={item.name}>
+          ? subAttrPreviewList.map((item) => <Typography.Paragraph key={`sub_attr_${item.name}`}>
             <Typography.Text strong>{item.name}：</Typography.Text>
             <Typography.Text>{item.value}</Typography.Text>
           </Typography.Paragraph>) : null}

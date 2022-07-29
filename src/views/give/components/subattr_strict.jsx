@@ -92,9 +92,8 @@ function SubAttrStrict({
   return <>
     {subAttrList.map((subItem, index) => {
       const fKey = `subItem_${subItem.group}_${index}`;
-      return <>
+      return <div key={fKey}>
         <SubAttrInput
-          key={fKey}
           index={index}
           defaultOptions={subItem}
           strictMode={strictMode}
@@ -105,7 +104,7 @@ function SubAttrStrict({
           artifactMainAttrName={artifactMainAttrName}
         />
         <Divider className="no-top-margin" />
-      </>;
+      </div>;
     })}
     <Typography.Paragraph>
       <Space>

@@ -117,7 +117,6 @@ function SubAttrInput({
     const targetSet = valueSet.filter(
       (item) => Math.floor(item.value * 10) <= Math.floor(tValue * 10)
     );
-    console.log(targetSet);
     if (targetSet.length > 0) {
       const target = targetSet[targetSet.length - 1];
       const r = {};
@@ -187,8 +186,9 @@ function SubAttrInput({
       </Col>
     </Row>
     {group ? <Row gutter={16}>
-      {subAttrsWordList.map((wordItem) => {
-        return <Col xxl={6} lg={12} md={12} sm={12} xs={12} key={wordItem.value}>
+      {subAttrsWordList.map((wordItem, i) => {
+        const key = `sub_attr_word_${wordItem.value}_${i}`;
+        return <Col xxl={6} lg={12} md={12} sm={12} xs={12} key={key}>
           <Form.Item label={wordItem.label}>
             {(!transfer)
               ? <InputNumber min={0} onChange={handleSubAttrWordItemCountChange(wordItem.value)} style={{ width: '100%' }} value={codes[wordItem.value]} />

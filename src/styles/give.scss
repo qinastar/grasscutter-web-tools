@@ -82,8 +82,8 @@
       width: $width-8;
       height: $width-8;
       &.ant-avatar-icon {
-        font-size: 32px;
-        padding-top: 8px;
+        font-size: $font-size-huge;
+        padding-top: $width-1;
       }
     }
     &-meta {

@@ -20540,5 +20540,167 @@
         "star": 3
       }
     ]
+  },
+  {
+    "id": 20,
+    "name": "深林的记忆(3.0草套)",
+    "key": "",
+    "eng": "",
+    "children": [
+      {
+        "flower": [
+          {
+            "id": 20544,
+            "name": "迷宫的游人",
+            "type": "flower",
+            "attrsCount": 4
+          },
+          {
+            "id": 20543,
+            "name": "迷宫的游人",
+            "type": "flower",
+            "attrsCount": 3
+          }
+        ],
+        "feather": [
+          {
+            "id": 20524,
+            "name": "翠蔓的智者",
+            "type": "feather",
+            "attrsCount": 4
+          },
+          {
+            "id": 20523,
+            "name": "翠蔓的智者",
+            "type": "feather",
+            "attrsCount": 3
+          }
+        ],
+        "sand": [
+          {
+            "id": 20554,
+            "name": "贤智的定期",
+            "type": "sand",
+            "attrsCount": 4
+          },
+          {
+            "id": 20553,
+            "name": "贤智的定期",
+            "type": "sand",
+            "attrsCount": 3
+          }
+        ],
+        "cup": [
+          {
+            "id": 20514,
+            "name": "迷误者之灯",
+            "type": "cup",
+            "attrsCount": 4
+          },
+          {
+            "id": 20513,
+            "name": "迷误者之灯",
+            "type": "cup",
+            "attrsCount": 3
+          }
+        ],
+        "head": [
+          {
+            "id": 20534,
+            "name": "月桂的宝冠",
+            "type": "head",
+            "attrsCount": 4
+          },
+          {
+            "id": 20533,
+            "name": "月桂的宝冠",
+            "type": "head",
+            "attrsCount": 3
+          }
+        ],
+        "star": 5
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "name": "饰金之梦(3.0精通套)",
+    "key": "",
+    "eng": "",
+    "children": [
+      {
+        "flower": [
+          {
+            "id": 21544,
+            "name": "梦中的铁花",
+            "type": "flower",
+            "attrsCount": 4
+          },
+          {
+            "id": 21543,
+            "name": "梦中的铁花",
+            "type": "flower",
+            "attrsCount": 3
+          }
+        ],
+        "feather": [
+          {
+            "id": 21524,
+            "name": "裁断的翎羽",
+            "type": "feather",
+            "attrsCount": 4
+          },
+          {
+            "id": 21523,
+            "name": "裁断的翎羽",
+            "type": "feather",
+            "attrsCount": 3
+          }
+        ],
+        "sand": [
+          {
+            "id": 21554,
+            "name": "沉金的岁月",
+            "type": "sand",
+            "attrsCount": 4
+          },
+          {
+            "id": 21553,
+            "name": "沉金的岁月",
+            "type": "sand",
+            "attrsCount": 3
+          }
+        ],
+        "cup": [
+          {
+            "id": 21514,
+            "name": "如蜜的终宴",
+            "type": "cup",
+            "attrsCount": 4
+          },
+          {
+            "id": 21513,
+            "name": "如蜜的终宴",
+            "type": "cup",
+            "attrsCount": 3
+          }
+        ],
+        "head": [
+          {
+            "id": 21534,
+            "name": "沙王的投影",
+            "type": "head",
+            "attrsCount": 4
+          },
+          {
+            "id": 21533,
+            "name": "沙王的投影",
+            "type": "head",
+            "attrsCount": 3
+          }
+        ],
+        "star": 5
+      }
+    ]
   }
 ]
