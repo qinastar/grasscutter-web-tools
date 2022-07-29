@@ -51,7 +51,7 @@ function GiveArtifactsPage() {
     return strictMode ? ArtifactGroupsRawData.filter((item) => {
       return DuplicatedArtifact.indexOf(item.id) === -1;
     }) : ArtifactGroupsRawData;
-  }, [generatorMode, strictMode]);
+  }, [strictMode]);
 
   // 圣遗物组
   const ArtifactGroupsOptions = useMemo(() => {
@@ -98,7 +98,7 @@ function GiveArtifactsPage() {
         group,
       };
     });
-  }, [artifactGroupIndex, generatorMode, strictMode]);
+  }, [artifactGroupIndex, strictMode]);
 
   // 类型
   const ArtifactTypeOptions = useMemo(() => {
@@ -150,24 +150,25 @@ function GiveArtifactsPage() {
     return ret.map((item) => ({
       value: item.value,
       label: `${item.label} (${item.value})`,
-      name: item.label,
+      masterAttrName: item.label,
     }));
-  }, [generatorMode, strictMode, artifactType, artifactTypeSplit, artifactMainAttr]);
+  }, [strictMode, artifactType, artifactTypeSplit]);
 
   // 获取主词条名称
   const artifactMainAttrName = useMemo(() => {
-    return get(ArtifactMainAttrsFiltered.find((item) => item.value === artifactMainAttr), 'name');
+    return get(ArtifactMainAttrsFiltered.find((item) => item.value === artifactMainAttr), 'masterAttrName');
   }, [ArtifactMainAttrsFiltered, artifactMainAttr]);
 
   // 当前星级
   const currentStar = useMemo(() => {
     return ArtifactStarOptions[artifactStarIndex]?.group?.star;
   }, [artifactStarIndex, ArtifactStarOptions]);
+
   // 星级变更
   useEffect(() => {
-    if (strictMode) return;
+    if (!strictMode) return;
     setArtifactLevel(ArtifactLevelLimitation[currentStar]);
-  }, [currentStar]);
+  }, [currentStar, strictMode]);
 
   // 计算词条总和
   const sharedWordsCount = useMemo(() => {
@@ -206,6 +207,7 @@ function GiveArtifactsPage() {
 
     return `/give${forUserId ? ` @${forUserId}` : ''} ${get(artifactCodeList, '0.id')} ${artifactMainAttr} ${subAttrCodeListText.join(' ')} lv${artifactLevel + 1}`;
   }, [
+    strictMode,
     forUserId,
     currentStar,
     sharedWordsCount,
@@ -303,7 +305,7 @@ function GiveArtifactsPage() {
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item label="等级">
-                <InputNumber size="large" min={1} max={ArtifactLevelLimitation[currentStar] || 20} value={artifactLevel} onChange={(val) => setArtifactLevel(val)} style={{ width: '100%' }} />
+                <InputNumber size="large" min={1} max={strictMode ? (ArtifactLevelLimitation[currentStar] || 20) : 20} value={artifactLevel} onChange={(val) => setArtifactLevel(val)} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -353,10 +355,11 @@ function GiveArtifactsPage() {
       <div className="preview-layout">
         <Typography.Title level={4}>主词条：{get(ArtifactMainAttrsMap, artifactMainAttr, '未知')}</Typography.Title>
         <Divider />
-        {subAttrPreviewList.map((item) => <Typography.Paragraph key={item.name}>
-          <Typography.Text strong>{item.name}：</Typography.Text>
-          <Typography.Text>{item.value}</Typography.Text>
-        </Typography.Paragraph>)}
+        {subAttrPreviewList.length
+          ? subAttrPreviewList.map((item) => <Typography.Paragraph key={item.name}>
+            <Typography.Text strong>{item.name}：</Typography.Text>
+            <Typography.Text>{item.value}</Typography.Text>
+          </Typography.Paragraph>) : null}
       </div>
       <div className="fav-layout">
         <Typography.Title level={4}>预设圣遗物</Typography.Title>

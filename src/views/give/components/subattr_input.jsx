@@ -117,6 +117,7 @@ function SubAttrInput({
     const targetSet = valueSet.filter(
       (item) => Math.floor(item.value * 10) <= Math.floor(tValue * 10)
     );
+    console.log(targetSet);
     if (targetSet.length > 0) {
       const target = targetSet[targetSet.length - 1];
       const r = {};
