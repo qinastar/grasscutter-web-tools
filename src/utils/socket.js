@@ -107,7 +107,7 @@ export class GCManagerClient {
   sendCMD(data) {
     if (!data) return;
     this.socket.send(JSON.stringify({
-      type: 'CMD', data,
+      type: 'CMD', data: (data.indexOf('/') === 0) ? data.slice(1, data.length) : data,
     }));
   }
 

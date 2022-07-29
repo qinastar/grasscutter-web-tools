@@ -6,10 +6,15 @@
   display: flex;
   flex-direction: row;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   .main-layout {
     flex: 1 1 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     .artifact-forms {
+      flex: 1 1 auto;
+      overflow: auto;
       padding: $width-4;
       .artifact-group-selector {
         .artifact-group-item {
@@ -33,6 +38,15 @@
             }
           }
         }
+      }
+    }
+    .command-layout {
+      flex: 0 0 $width-8;
+      .ant-input {
+        border-top: 1px solid $grey-8;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
       }
     }
   }

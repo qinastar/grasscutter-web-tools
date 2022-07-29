@@ -288,6 +288,7 @@ const generateCategories = () => {
         percent: d.percent,
         children: [],
         valueSet: [],
+        valueMax: 0,
       }
     })
   }
@@ -320,6 +321,11 @@ const generateCategories = () => {
     Object.keys(SubAttrDefinition).forEach(key => {
       const d = SubAttrDefinition[key];
       result[i][key].valueSet = genSubAttrsValueTable(result[i][key].children, d.percent, i)
+      let max = 0;
+      result[i][key].valueSet.forEach(item => {
+        max = Math.max(max, item.value);
+      });
+      result[i][key].valueMax = max;
     })
   }
 

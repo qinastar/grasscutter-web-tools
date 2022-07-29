@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Form, Layout, Select, Row, Col, InputNumber, Avatar, Rate, Typography, Input, Divider, Menu
+  Form, Layout, Select, Row, Col, InputNumber,
+  Avatar, Rate, Typography, Input, Divider, Menu, Button, message
 } from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
 import { get, isEmpty } from 'lodash';
@@ -10,7 +11,7 @@ import ArtifactMainAttrs from '@/constants/artifact_main_attrs.json';
 import MonaArtifactMeta from '@/constants/mona/_gen_artifact';
 import {
   ArtifactStarLimitation, DuplicatedArtifact,
-  ArtifactMainAttrsLimitation, ArtifactLevelLimitation
+  ArtifactMainAttrsLimitation, ArtifactLevelLimitation, ArtifactSubAttrMaxLimitation
 } from '@/constants/artifact_limitation';
 
 const ArtifactMainAttrsMap = {};
@@ -37,9 +38,10 @@ function GiveArtifactsPage() {
   const [artifactType, setArtifactType] = useState(null);
   const [artifactLevel, setArtifactLevel] = useState(20);
   const [artifactMainAttr, setArtifactMainAttr] = useState(null);
+  const [subAttrList, setSubAttrList] = useState([]);
   const strictMode = generatorMode === 'strict';
 
-  const artifactTypeSplited = useMemo(() => {
+  const artifactTypeSplit = useMemo(() => {
     return (artifactType || '_').split('_');
   }, [artifactType]);
 
@@ -136,15 +138,21 @@ function GiveArtifactsPage() {
     let ret = ArtifactMainAttrs;
     if (strictMode)  {
       if (!artifactType) return [];
-      const validValues = ArtifactMainAttrsLimitation[artifactTypeSplited[1]] || [];
+      const validValues = ArtifactMainAttrsLimitation[artifactTypeSplit[1]] || [];
       ret = ArtifactMainAttrs.filter((item) => validValues.indexOf(item.value) > -1);
       setArtifactMainAttr(!isEmpty(ret) ? ret[0].value : '');
     }
     return ret.map((item) => ({
       value: item.value,
       label: `${item.label} (${item.value})`,
+      name: item.label,
     }));
-  }, [generatorMode, artifactType, artifactTypeSplited]);
+  }, [generatorMode, artifactType, artifactTypeSplit, artifactMainAttr]);
+
+  // 获取主词条名称
+  const artifactMainAttrName = useMemo(() => {
+    return get(ArtifactMainAttrsFiltered.find((item) => item.value === artifactMainAttr), 'name');
+  }, [ArtifactMainAttrsFiltered, artifactMainAttr]);
 
   // 当前星级
   const currentStar = useMemo(() => {
@@ -156,6 +164,27 @@ function GiveArtifactsPage() {
     setArtifactLevel(ArtifactLevelLimitation[currentStar]);
   }, [currentStar]);
 
+  // 计算词条总和
+  const sharedWordsCount = useMemo(() => {
+    return [0, ...subAttrList].reduce((ans, item) => {
+      return ans + [0, ...Object.keys(item.codes)].reduce((ans2, key) => {
+        return ans2 + item.codes[key];
+      });
+    });
+  }, [subAttrList]);
+
+  const subAttrCodeList = useMemo(() => {
+    const ret = [];
+    subAttrList.forEach((item) => {
+      Object.keys(item.codes).forEach((code) => {
+        if (item.codes[code] > 0) {
+          ret.push({ code, count: item.codes[code] });
+        }
+      });
+    });
+    return ret;
+  }, [subAttrList]);
+
   // 命令计算
   const calculatedCommand = useMemo(() => {
     if (
@@ -163,22 +192,41 @@ function GiveArtifactsPage() {
       || artifactType === null || artifactMainAttr === null
     ) return '';
     const artStarGroup = get(ArtifactStarOptions, `${artifactStarIndex}.group`);
-    console.log(artifactTypeSplited, 'aaa');
-    const artifactCodeList = get(artStarGroup, artifactTypeSplited[1], []) || [];
+    const artifactCodeList = get(artStarGroup, artifactTypeSplit[1], []) || [];
 
-    const subAttrsList = [];   // TODO 副词条
+    if (strictMode && sharedWordsCount >= ArtifactSubAttrMaxLimitation[currentStar]) {
+      return `[error]词条错误，请不要超过${ArtifactSubAttrMaxLimitation[currentStar]}个词条`;
+    }
 
-    return `/give${forUserId ? ` @${forUserId}` : ''} ${get(artifactCodeList, '0.id')} ${artifactMainAttr} ${subAttrsList.join(' ')} lv${artifactLevel + 1}`;
+    const subAttrCodeListText = subAttrCodeList.map((item) => `${item.code},${item.count}`);
+
+    return `/give${forUserId ? ` @${forUserId}` : ''} ${get(artifactCodeList, '0.id')} ${artifactMainAttr} ${subAttrCodeListText.join(' ')} lv${artifactLevel + 1}`;
   }, [
     forUserId,
+    currentStar,
+    sharedWordsCount,
     ArtifactStarOptions,
     artifactGroupIndex,
     artifactLevel,
     artifactMainAttr,
     artifactStarIndex,
     artifactType,
-    artifactTypeSplited
+    artifactTypeSplit,
+    subAttrCodeList
   ]);
+
+  // 发送give指令
+  const sendArtCommand = () => {
+    if (!window.GCManageClient.isConnected()) {
+      message.error('服务器未连接，无法发送');
+      return;
+    }
+    if (!calculatedCommand || calculatedCommand.indexOf('[error]') > -1) {
+      message.error('无效指令，无法发送');
+      return;
+    }
+    window.GCManageClient.sendCMD(calculatedCommand);
+  };
 
   return <Layout.Content className="give-artifact-page">
     <div className="main-layout">
@@ -268,11 +316,22 @@ function GiveArtifactsPage() {
               starLevel={currentStar}
               artLevel={artifactLevel}
               strictMode={strictMode}
+              onChange={(s) => setSubAttrList(s)}
+              artifactMainAttrName={artifactMainAttrName}
             />
             <Divider />
           </> : null}
-          <Input value={calculatedCommand} placeholder="请先选择词条" />
         </Form>
+      </div>
+      <div className="command-layout">
+        <Row flex>
+          <Col flex="1 1 auto">
+            <Input size="large" value={calculatedCommand} placeholder="请先选择词条" />
+          </Col>
+          <Col flex="0 0 auto">
+            <Button size="large" onClick={sendArtCommand}>生成</Button>
+          </Col>
+        </Row>
       </div>
     </div>
     <div className="right-layout">

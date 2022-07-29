@@ -108,3 +108,16 @@ export const ArtifactSubAttrCateMaxLimitation = {
   2: 1,
   1: 1,
 };
+
+export const ArtifactSubAttrsExcludeByMaster = {
+  生命值: '102',
+  生命值百分比: '103',
+  攻击力: '105',
+  攻击力百分比: '106',
+  防御力: '108',
+  防御力百分比: '109',
+  元素充能效率: '123',
+  元素精通: '124',
+  暴击率: '120',
+  暴击伤害: '122',
+};
