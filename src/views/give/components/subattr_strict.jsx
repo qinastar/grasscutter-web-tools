@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import P from 'prop-types';
 import SubAttrInput from '@views/give/components/subattr_input';
 import {
-  Button, Space, Typography, message, Divider
+  Button, message, Divider
 } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined } from '@ant-design/icons';
 import {
   ArtifactSubAttrCateLimitation,
   ArtifactSubAttrFullCateNeedLevel, ArtifactSubAttrsExcludeByMaster
@@ -63,10 +63,10 @@ function SubAttrStrict({
   // }, [starLevel, artLevel]);
 
   const handleAddSubAttr = () => {
-    if (subAttrList.length >= ArtifactSubAttrCateLimitation[starLevel]) {
-      message.error('已达到词条种类限制，如果要添加请使用自由模式');
-      return;
-    }
+    // if (subAttrList.length >= ArtifactSubAttrCateLimitation[starLevel]) {
+    //   message.error('已达到词条种类限制，如果要添加请使用自由模式');
+    //   return;
+    // }
     const r = [...subAttrList];
     r.push({ ...DefaultGroupEntity });
     setSubAttrList(r);
@@ -100,16 +100,15 @@ function SubAttrStrict({
           selectedGroups={selectedGroups}
           artifactMainAttrName={artifactMainAttrName}
         />
-        <Divider className="no-top-margin" />
+        {(index === subAttrList.length - 1)
+          ? <Divider className="no-top-margin">
+            <Button type="text" onClick={handleAddSubAttr} disabled={subAttrList.length >= ArtifactSubAttrCateLimitation[starLevel]}>
+              <PlusCircleOutlined /> 添加
+            </Button>
+          </Divider>
+          : <Divider className="no-top-margin" />}
       </div>;
     })}
-    <Typography.Paragraph>
-      <Space>
-        <Button type="primary" onClick={handleAddSubAttr}>
-          <PlusOutlined /> 添加
-        </Button>
-      </Space>
-    </Typography.Paragraph>
   </>;
 }
 

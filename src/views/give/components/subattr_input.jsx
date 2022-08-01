@@ -48,8 +48,8 @@ function SubAttrInput({
       label: ArtifactSubAttrsGroupMapping[key].name,
     }));
     return ret.filter((item) => (
-      (rejectGroup && rejectGroup !== item.value)
-        && (item.value === group || !selectedGroups.includes(item.value))
+      (!rejectGroup || (rejectGroup && rejectGroup !== item.value))
+      && (item.value === group || !selectedGroups.includes(item.value))
     ));
   }, [group, starLevel, selectedGroups, artifactMainAttrName]);
 

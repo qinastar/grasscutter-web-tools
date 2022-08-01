@@ -1,12 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useRef, useState
+} from 'react';
 import {
   Form, Layout, Select, Row, Col, InputNumber,
-  Avatar, Rate, Typography, Input, Divider, Menu, Button, message
+  Avatar, Rate, Typography, Input, Divider, Menu, Button, message, Space
 } from 'antd';
 import { QuestionOutlined } from '@ant-design/icons';
 import { get, isEmpty } from 'lodash';
 import SubAttrStrict from '@views/give/components/subattr_strict';
 import SubAttrFreeList from '@views/give/components/subattr_free';
+import ArtifactFavList from '@views/give/components/fav_list';
+import { useDispatch } from 'react-redux';
 import ArtifactGroupsRawData from '@/constants/artifact_groups_map.json';
 import ArtifactSubAttrsGroupMapping from '@/constants/artifact_sub_attrs_group_map.json';
 import ArtifactMainAttrs from '@/constants/artifact_main_attrs.json';
@@ -15,6 +19,8 @@ import {
   ArtifactStarLimitation, DuplicatedArtifact,
   ArtifactMainAttrsLimitation, ArtifactLevelLimitation, ArtifactSubAttrMaxLimitation
 } from '@/constants/artifact_limitation';
+import { ArtifactFavListReducer } from '@/store/profiles';
+import PromptConfirm from '@/utils/pconfirm';
 
 const ArtifactMainAttrsMap = {};
 ArtifactMainAttrs.forEach((item) => { ArtifactMainAttrsMap[item.value] = item.label; });
@@ -32,16 +38,26 @@ const ArtifactTypeOptionsPresets = [
   { label: '理之冠', value: 'head' }
 ];
 
+const ArtifactTypeNameMap = {
+  flower: '生之花',
+  feather: '死之羽',
+  sand: '时之沙',
+  cup: '空之杯',
+  head: '理之冠',
+};
+
 function GiveArtifactsPage() {
-  const [generatorMode, setGeneratorMode] = useState('free' || 'strict');
+  const dispatch = useDispatch();
+  const [generatorMode, setGeneratorMode] = useState('strict');
   const [forUserId, setForUserId] = useState('');
-  const [artifactGroupIndex, setArtifactGroupIndex] = useState(null);
-  const [artifactStarIndex, setArtifactStarIndex] = useState(null);
+  const [artifactGroupId, setArtifactGroupId] = useState(null);
+  const [artifactStar, setArtifactStar] = useState(null);
   const [artifactType, setArtifactType] = useState(null);
   const [artifactLevel, setArtifactLevel] = useState(20);
   const [artifactMainAttr, setArtifactMainAttr] = useState(null);
   const [subAttrList, setSubAttrList] = useState([]);
   const [subAttrListFree, setSubAttrListFree] = useState([]);
+  const confirmRef = useRef();
 
   const strictMode = useMemo(() => {
     return generatorMode === 'strict';
@@ -59,7 +75,7 @@ function GiveArtifactsPage() {
 
   // 圣遗物组
   const ArtifactGroupsOptions = useMemo(() => {
-    return ArtifactGroupsRawDataList.map((group, index) => {
+    return ArtifactGroupsRawDataList.map((group) => {
       const metas = get(MonaArtifactMeta, group.key, {});
       const [ef2, ef4] = [get(metas, 'effect2', ''), get(metas, 'effect4', '')];
       return {
@@ -75,53 +91,65 @@ function GiveArtifactsPage() {
             </div>
           </div>
         </div>,
-        value: index,
+        value: group.id,
       };
     });
   }, [ArtifactGroupsRawDataList]);
 
   useEffect(() => {
-    setArtifactGroupIndex(null);
-    setArtifactStarIndex(null);
+    setArtifactGroupId(null);
+    setArtifactStar(null);
     setArtifactType(null);
     setArtifactMainAttr(null);
   }, [strictMode]);
 
+  const artifactGroup = useMemo(() => {
+    if (artifactGroupId === null) return [];
+    return ArtifactGroupsRawDataList.find((item) => item.id === artifactGroupId);
+  }, [artifactGroupId]);
+
   // 品质
   const ArtifactStarOptions = useMemo(() => {
-    if (artifactGroupIndex === null) return [];
-    const artGroup = ArtifactGroupsRawDataList[artifactGroupIndex];
-    if (!artGroup) return [];
-    const artStarGroups = artGroup?.children ?? [];
-    if (!isEmpty(artStarGroups)) {
-      setArtifactStarIndex(0);
+    if (!artifactGroup) return [];
+    const artStarGroups = artifactGroup?.children ?? [];
+    if (isEmpty(artStarGroups)) {
+      setArtifactStar(null);
+      return [];
     }
 
-    const limitList = get(ArtifactStarLimitation, artGroup.id, []);
+    const limitList = get(ArtifactStarLimitation, artifactGroup.id, []);
 
     const artStarGroupFiltered = strictMode
       ? artStarGroups.filter((group) => limitList.indexOf(group.star) > -1)
       : artStarGroups;
-    return artStarGroupFiltered.map((group, index) => {
-      const key = `${artifactGroupIndex}_${group.star}`;
+    const ret = artStarGroupFiltered.map((group, index) => {
+      const key = `${artifactGroupId}_${group.star}`;
       return {
-        value: index,
+        value: group.star,
         label: <Rate key={key} disabled defaultValue={group.star} />,
         group,
       };
     });
-  }, [artifactGroupIndex, strictMode]);
+    if (!isEmpty(ret)) {
+      setArtifactStar(get(ret, '0.value', null));
+    } else {
+      setArtifactStar(null);
+    }
+    return ret;
+  }, [artifactGroup, strictMode]);
 
-  // 类型
+  const artifactGroupWithStar = useMemo(() => {
+    return ArtifactStarOptions.find((item) => item.value === artifactStar);
+  }, [artifactStar, ArtifactStarOptions]);
+
+  // 部位
   const ArtifactTypeOptions = useMemo(() => {
-    if (artifactGroupIndex === null) return [];
-    const artGroup = ArtifactGroupsRawDataList[artifactGroupIndex];
-    const artStarGroup = ArtifactStarOptions[artifactStarIndex];
+    if (!artifactGroup || !artifactGroupWithStar) return [];
     let firstCode = '';
     const ret = ArtifactTypeOptionsPresets.map((info) => {
-      const artifactCodeList = get(artStarGroup, `group.${info.value}`) || [];
+      const artifactCodeList = get(artifactGroupWithStar, `group.${info.value}`) || [];
       if (isEmpty(artifactCodeList)) return null;
-      const metas = get(MonaArtifactMeta, artGroup.key, {});
+      const metas = get(MonaArtifactMeta, artifactGroup.key, {});
       const aName = get(metas, `${info.value}.chs`) || get(artifactCodeList, '0.name');
       const aAvatar = get(metas, `${info.value}.url`);
       return <Select.OptGroup key={info.value} label={`${aName} - ${info.label}`}>
@@ -148,7 +176,7 @@ function GiveArtifactsPage() {
       setArtifactType(firstCode);
     }
     return ret;
-  }, [artifactGroupIndex, ArtifactStarOptions, artifactStarIndex]);
+  }, [artifactGroup, artifactGroupWithStar]);
 
   // 主词条计算
   const ArtifactMainAttrsFiltered = useMemo(() => {
@@ -178,8 +206,8 @@ function GiveArtifactsPage() {
 
   // 当前星级
   const currentStar = useMemo(() => {
-    return ArtifactStarOptions[artifactStarIndex]?.group?.star;
-  }, [artifactStarIndex, ArtifactStarOptions]);
+    return artifactGroupWithStar?.value ?? 0;
+  }, [artifactGroupWithStar]);
 
   // 星级变更
   useEffect(() => {
@@ -227,10 +255,10 @@ function GiveArtifactsPage() {
   // 命令计算
   const calculatedCommand = useMemo(() => {
     if (
-      artifactGroupIndex === null || artifactStarIndex === null
+      !artifactGroup || !artifactGroupWithStar
       || artifactType === null || artifactMainAttr === null
     ) return '';
-    const artStarGroup = get(ArtifactStarOptions, `${artifactStarIndex}.group`);
+    const artStarGroup = artifactGroupWithStar.group;
     const artifactCodeList = get(artStarGroup, artifactTypeSplit[1], []) || [];
     if (strictMode && sharedWordsCount > ArtifactSubAttrMaxLimitation[currentStar]) {
       return `[error]词条错误，请不要超过${ArtifactSubAttrMaxLimitation[currentStar]}个词条`;
@@ -244,11 +272,10 @@ function GiveArtifactsPage() {
     forUserId,
     currentStar,
     sharedWordsCount,
-    ArtifactStarOptions,
-    artifactGroupIndex,
+    artifactGroupWithStar,
+    artifactGroup,
     artifactLevel,
     artifactMainAttr,
-    artifactStarIndex,
     artifactType,
     artifactTypeSplit,
     subAttrCodeList,
@@ -256,7 +283,7 @@ function GiveArtifactsPage() {
   ]);
 
   // 发送give指令
-  const sendArtCommand = () => {
+  const sendArtCommand = useCallback(() => {
     if (!window.GCManageClient.isConnected()) {
       message.error('服务器未连接，无法发送');
       return;
@@ -266,7 +293,7 @@ function GiveArtifactsPage() {
       return;
     }
     window.GCManageClient.sendCMD(calculatedCommand);
-  };
+  }, [calculatedCommand]);
 
   // 词条预览
   const subAttrPreviewList = useMemo(() => {
@@ -279,6 +306,48 @@ function GiveArtifactsPage() {
       };
     }).filter((item) => !!item.name);
   }, [subAttrList]);
+
+  const handleSaveArtifact = () => {
+    if (confirmRef.current) {
+      confirmRef.current.showModal();
+    }
+  };
+
+  // 保存圣遗物数据
+  const saveArtifact = useCallback((remark) => {
+    const ret = {
+      strictMode,
+      artifactGroupId,
+      artifactStar,
+      artifactType,
+      artifactLevel,
+      artifactMainAttr,
+      meta: {
+        name: get(artifactGroup, 'name', 'null'), // 名称
+        type: get(ArtifactTypeNameMap, artifactTypeSplit[1], 'null'), // 部位
+        remark, // 备注
+      },
+    };
+    if (strictMode) {
+      ret.subAttrList = subAttrList;
+    } else {
+      ret.subAttrList = subAttrListFree;
+    }
+    dispatch(ArtifactFavListReducer.actions.addLocal(ret));
+    message.success('保存成功');
+  }, [
+    strictMode,
+    artifactGroup,
+    ArtifactTypeNameMap,
+    artifactGroupId,
+    artifactStar,
+    artifactType,
+    artifactTypeSplit,
+    artifactLevel,
+    artifactMainAttr,
+    subAttrList,
+    subAttrListFree
+  ]);
 
   return <Layout.Content className="give-artifact-page">
     <div className="main-layout">
@@ -301,9 +370,9 @@ function GiveArtifactsPage() {
                   className="artifact-group-selector"
                   dropdownClassName="artifact-group-selector-dropdown"
                   options={ArtifactGroupsOptions}
-                  value={artifactGroupIndex}
+                  value={artifactGroupId}
                   onSelect={(val) => {
-                    setArtifactGroupIndex(val);
+                    setArtifactGroupId(val);
                   }}
                 />
               </Form.Item>
@@ -313,9 +382,9 @@ function GiveArtifactsPage() {
                 <Select
                   placeholder="请选择"
                   options={ArtifactStarOptions}
-                  value={artifactStarIndex}
+                  value={artifactStar}
                   onSelect={(val) => {
-                    setArtifactStarIndex(val);
+                    setArtifactStar(val);
                   }}
                 />
               </Form.Item>
@@ -360,7 +429,7 @@ function GiveArtifactsPage() {
               </Form.Item>
             </Col>
           </Row>
-          {(artifactGroupIndex !== null && artifactStarIndex !== null) ? <>
+          {(artifactGroup && artifactStar !== null) ? <>
             <Typography.Title level={4}>副词条设定</Typography.Title>
             <Divider className="no-top-margin" />
             {strictMode ? <SubAttrStrict
@@ -371,9 +440,9 @@ function GiveArtifactsPage() {
             /> : <SubAttrFreeList
               onChange={(s) => setSubAttrListFree(s)}
             />}
-            <Divider />
           </> : null}
         </Form>
+        <PromptConfirm ref={confirmRef} title="保存圣遗物预设" messageText="请设置圣遗物备注，也可以留空" onOk={saveArtifact} />
       </div>
       <div className="command-layout">
         <Row>
@@ -381,14 +450,15 @@ function GiveArtifactsPage() {
             <Input size="large" value={calculatedCommand} placeholder="请先选择词条" />
           </Col>
           <Col flex="0 0 auto">
-            <Button size="large" onClick={sendArtCommand}>生成</Button>
+            <Button size="large" onClick={handleSaveArtifact}>存为预设</Button>
+            <Button size="large" type="primary" onClick={sendArtCommand}>执行生成</Button>
           </Col>
         </Row>
       </div>
     </div>
     <div className="right-layout">
       <div className="preview-layout customized-scroll">
-        <Typography.Title level={4}>主词条：{get(ArtifactMainAttrsMap, artifactMainAttr, '未知')}</Typography.Title>
+        <Typography.Title level={5}>主词条：{get(ArtifactMainAttrsMap, artifactMainAttr, '未知')}</Typography.Title>
         <Divider />
         {strictMode ? (subAttrPreviewList.length
           ? subAttrPreviewList.map((item) => <Typography.Paragraph key={`sub_attr_${item.name}`}>
@@ -398,9 +468,7 @@ function GiveArtifactsPage() {
           : <Typography.Text>请先选择副词条</Typography.Text>)
           : <Typography.Text>自由模式不支持预览</Typography.Text>}
       </div>
-      <div className="fav-layout">
-        <Typography.Title level={4}>预设圣遗物</Typography.Title>
-      </div>
+      <ArtifactFavList />
     </div>
   </Layout.Content>;
 }
