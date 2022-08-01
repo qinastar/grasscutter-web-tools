@@ -100,3 +100,14 @@ body, html, #root {
   }
 }
 
+.customized-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.customized-scroll::-webkit-scrollbar-track {
+  background: $black-8;
+}
+.customized-scroll::-webkit-scrollbar-thumb {
+  background: $blue-8;
+  border-radius: $width-2;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}

@@ -12,7 +12,6 @@ import ArtifactSubAttrsGroupMapping from '@/constants/artifact_sub_attrs_group_m
 function SubAttrInput({
   index,
   defaultOptions,
-  strictMode,
   starLevel,
   onChange,
   onRemove,
@@ -48,11 +47,10 @@ function SubAttrInput({
       value: key,
       label: ArtifactSubAttrsGroupMapping[key].name,
     }));
-    return strictMode
-      ? ret.filter((item) => (
-        (rejectGroup && rejectGroup !== item.value)
+    return ret.filter((item) => (
+      (rejectGroup && rejectGroup !== item.value)
         && (item.value === group || !selectedGroups.includes(item.value))
-      )) : ret;
+    ));
   }, [group, starLevel, selectedGroups, artifactMainAttrName]);
 
   // 子词条组
@@ -77,7 +75,7 @@ function SubAttrInput({
       r[item.value] = 0;
     });
     setCodes(r);
-  }, [strictMode, subAttrsWordList]);
+  }, [subAttrsWordList]);
 
   const handleSubAttrTransferModeChange = (val) => {
     setTransfer(val);
@@ -89,11 +87,9 @@ function SubAttrInput({
       if (key === wordItemValue) return;
       sum += codes[key];
     });
-    // 严格模式判定
-    if (strictMode) {
-      if (sum + val > ArtifactSubAttrCateMaxLimitation[starLevel]) {
-        return;
-      }
+    // 词条类型限制
+    if (sum + val > ArtifactSubAttrCateMaxLimitation[starLevel]) {
+      return;
     }
     const r = { ...codes };
     r[wordItemValue] = val;
@@ -210,7 +206,6 @@ SubAttrInput.propTypes = {
     value: P.string,    // 推测模式手动填写的数值
     transfer: P.bool,   // 翻译模式：把现有的数值翻译成Item
   }).isRequired,
-  strictMode: P.bool.isRequired,
   starLevel: P.number.isRequired,
   artifactMainAttrName: P.string,
   onChange: P.func.isRequired,

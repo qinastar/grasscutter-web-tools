@@ -16,7 +16,7 @@ const DefaultGroupEntity = {
 
 // 以副词条为基准，可以自由选择是填词还是填
 function SubAttrStrict({
-  starLevel, artLevel, strictMode, onChange, artifactMainAttrName,
+  starLevel, artLevel, onChange, artifactMainAttrName,
 }) {
   const [subAttrList, setSubAttrList] = useState([{ ...DefaultGroupEntity }]);
 
@@ -25,8 +25,6 @@ function SubAttrStrict({
   }, [subAttrList]);
   
   useEffect(() => {
-    // 严格模式：限制圣遗物种类
-    if (!strictMode) return;
     let validLength = ArtifactSubAttrCateLimitation[starLevel]; // 圣遗物最大词条种类数
     if (artLevel < ArtifactSubAttrFullCateNeedLevel[starLevel]) { // 如果等级不足，减掉
       validLength -= Math.floor((ArtifactSubAttrFullCateNeedLevel[starLevel] - artLevel) / 4.0);
@@ -47,7 +45,7 @@ function SubAttrStrict({
     }
 
     setSubAttrList(rList);
-  }, [strictMode, starLevel, artifactMainAttrName]);
+  }, [starLevel, artifactMainAttrName]);
 
   const selectedGroups = useMemo(() => {
     return subAttrList.map((item) => item.group);
@@ -65,7 +63,7 @@ function SubAttrStrict({
   // }, [starLevel, artLevel]);
 
   const handleAddSubAttr = () => {
-    if (strictMode && subAttrList.length >= ArtifactSubAttrCateLimitation[starLevel]) {
+    if (subAttrList.length >= ArtifactSubAttrCateLimitation[starLevel]) {
       message.error('已达到词条种类限制，如果要添加请使用自由模式');
       return;
     }
@@ -96,7 +94,6 @@ function SubAttrStrict({
         <SubAttrInput
           index={index}
           defaultOptions={subItem}
-          strictMode={strictMode}
           starLevel={starLevel}
           onChange={handleSubAttrChange(index)}
           onRemove={handleRemoveSubAttr(index)}
@@ -119,7 +116,6 @@ function SubAttrStrict({
 SubAttrStrict.propTypes = {
   artLevel: P.number,
   starLevel: P.number,
-  strictMode: P.bool,
   artifactMainAttrName: P.string,
   onChange: P.func.isRequired,
 };
@@ -127,7 +123,6 @@ SubAttrStrict.propTypes = {
 SubAttrStrict.defaultProps = {
   starLevel: 0,
   artLevel: 20,
-  strictMode: true,
   artifactMainAttrName: '',
 };
 

@@ -6,6 +6,7 @@ import {
 import { QuestionOutlined } from '@ant-design/icons';
 import { get, isEmpty } from 'lodash';
 import SubAttrStrict from '@views/give/components/subattr_strict';
+import SubAttrFreeList from '@views/give/components/subattr_free';
 import ArtifactGroupsRawData from '@/constants/artifact_groups_map.json';
 import ArtifactSubAttrsGroupMapping from '@/constants/artifact_sub_attrs_group_map.json';
 import ArtifactMainAttrs from '@/constants/artifact_main_attrs.json';
@@ -32,7 +33,7 @@ const ArtifactTypeOptionsPresets = [
 ];
 
 function GiveArtifactsPage() {
-  const [generatorMode, setGeneratorMode] = useState('strict');
+  const [generatorMode, setGeneratorMode] = useState('free' || 'strict');
   const [forUserId, setForUserId] = useState('');
   const [artifactGroupIndex, setArtifactGroupIndex] = useState(null);
   const [artifactStarIndex, setArtifactStarIndex] = useState(null);
@@ -41,7 +42,10 @@ function GiveArtifactsPage() {
   const [artifactMainAttr, setArtifactMainAttr] = useState(null);
   const [subAttrList, setSubAttrList] = useState([]);
   const [subAttrListFree, setSubAttrListFree] = useState([]);
-  const strictMode = generatorMode === 'strict';
+
+  const strictMode = useMemo(() => {
+    return generatorMode === 'strict';
+  }, [generatorMode]);
 
   const artifactTypeSplit = useMemo(() => {
     return (artifactType || '_').split('_');
@@ -74,12 +78,20 @@ function GiveArtifactsPage() {
         value: index,
       };
     });
-  }, []);
+  }, [ArtifactGroupsRawDataList]);
+
+  useEffect(() => {
+    setArtifactGroupIndex(null);
+    setArtifactStarIndex(null);
+    setArtifactType(null);
+    setArtifactMainAttr(null);
+  }, [strictMode]);
 
   // 品质
   const ArtifactStarOptions = useMemo(() => {
     if (artifactGroupIndex === null) return [];
     const artGroup = ArtifactGroupsRawDataList[artifactGroupIndex];
+    if (!artGroup) return [];
     const artStarGroups = artGroup?.children ?? [];
     if (!isEmpty(artStarGroups)) {
       setArtifactStarIndex(0);
@@ -141,11 +153,16 @@ function GiveArtifactsPage() {
   // 主词条计算
   const ArtifactMainAttrsFiltered = useMemo(() => {
     let ret = ArtifactMainAttrs;
+    if (!artifactType) {
+      setArtifactMainAttr(null);
+      return [];
+    }
     if (strictMode)  {
-      if (!artifactType) return [];
       const validValues = ArtifactMainAttrsLimitation[artifactTypeSplit[1]] || [];
       ret = ArtifactMainAttrs.filter((item) => validValues.indexOf(item.value) > -1);
       setArtifactMainAttr(!isEmpty(ret) ? ret[0].value : '');
+    } else {
+      setArtifactMainAttr(ret[0].value);
     }
     return ret.map((item) => ({
       value: item.value,
@@ -166,8 +183,11 @@ function GiveArtifactsPage() {
 
   // 星级变更
   useEffect(() => {
-    if (!strictMode) return;
-    setArtifactLevel(ArtifactLevelLimitation[currentStar]);
+    if (!strictMode) {
+      setArtifactLevel(20);
+    } else {
+      setArtifactLevel(ArtifactLevelLimitation[currentStar]);
+    }
   }, [currentStar, strictMode]);
 
   // 计算词条总和
@@ -191,6 +211,19 @@ function GiveArtifactsPage() {
     return ret;
   }, [subAttrList]);
 
+  const subAttrCodeListFree = useMemo(() => {
+    const ret = {};
+    subAttrListFree.forEach((item) => {
+      if (!ret[item.value]) {
+        ret[item.value] = 0;
+      }
+      ret[item.value]++;
+    });
+    return Object.keys(ret).map((key) => {
+      return { code: key, count: ret[key] };
+    });
+  }, [subAttrListFree]);
+
   // 命令计算
   const calculatedCommand = useMemo(() => {
     if (
@@ -203,7 +236,7 @@ function GiveArtifactsPage() {
       return `[error]词条错误，请不要超过${ArtifactSubAttrMaxLimitation[currentStar]}个词条`;
     }
 
-    const subAttrCodeListText = subAttrCodeList.map((item) => `${item.code},${item.count}`);
+    const subAttrCodeListText = (strictMode ? subAttrCodeList : subAttrCodeListFree).map((item) => `${item.code},${item.count}`);
 
     return `/give${forUserId ? ` @${forUserId}` : ''} ${get(artifactCodeList, '0.id')} ${artifactMainAttr} ${subAttrCodeListText.join(' ')} lv${artifactLevel + 1}`;
   }, [
@@ -218,7 +251,8 @@ function GiveArtifactsPage() {
     artifactStarIndex,
     artifactType,
     artifactTypeSplit,
-    subAttrCodeList
+    subAttrCodeList,
+    subAttrCodeListFree
   ]);
 
   // 发送give指令
@@ -254,7 +288,7 @@ function GiveArtifactsPage() {
         selectedKeys={[generatorMode]}
         onSelect={({ key }) => setGeneratorMode(key)}
       />
-      <div className="artifact-forms">
+      <div className="artifact-forms customized-scroll">
         <Form size="large">
           <Row gutter={16}>
             <Col span={8}>
@@ -332,10 +366,11 @@ function GiveArtifactsPage() {
             {strictMode ? <SubAttrStrict
               starLevel={currentStar}
               artLevel={artifactLevel}
-              strictMode={strictMode}
               onChange={(s) => setSubAttrList(s)}
               artifactMainAttrName={artifactMainAttrName}
-            /> : null}
+            /> : <SubAttrFreeList
+              onChange={(s) => setSubAttrListFree(s)}
+            />}
             <Divider />
           </> : null}
         </Form>
@@ -352,14 +387,16 @@ function GiveArtifactsPage() {
       </div>
     </div>
     <div className="right-layout">
-      <div className="preview-layout">
+      <div className="preview-layout customized-scroll">
         <Typography.Title level={4}>主词条：{get(ArtifactMainAttrsMap, artifactMainAttr, '未知')}</Typography.Title>
         <Divider />
-        {subAttrPreviewList.length
+        {strictMode ? (subAttrPreviewList.length
           ? subAttrPreviewList.map((item) => <Typography.Paragraph key={`sub_attr_${item.name}`}>
             <Typography.Text strong>{item.name}：</Typography.Text>
             <Typography.Text>{item.value}</Typography.Text>
-          </Typography.Paragraph>) : null}
+          </Typography.Paragraph>)
+          : <Typography.Text>请先选择副词条</Typography.Text>)
+          : <Typography.Text>自由模式不支持预览</Typography.Text>}
       </div>
       <div className="fav-layout">
         <Typography.Title level={4}>预设圣遗物</Typography.Title>

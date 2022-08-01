@@ -16,5 +16,6 @@
     "@babel/preset-env": "^7.18.9",
     "babel-node": "^0.0.1-security",
     "babel-preset-env": "^1.7.0"
-  }
+  },
+  "dependencies": {}
 }

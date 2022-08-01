@@ -42,6 +42,19 @@
       .ant-divider-horizontal.no-top-margin {
         margin: 0 0 $width-6 0 !important;
       }
+      .sub-attr-free-selector {
+        margin-top: $width-4;
+        height: $width-17;
+        overflow: hidden;
+        border: 1px solid $grey-8;
+        .ant-col {
+          overflow: auto;
+          height: 100%;
+          &:nth-child(2) {
+            border-left: 1px solid $grey-8;
+          }
+        }
+      }
     }
     .command-layout {
       flex: 0 0 $width-8;
