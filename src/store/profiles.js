@@ -4,16 +4,18 @@ export const ArtifactFavListReducer = createSlice({
   name: 'artifactFavList',
   initialState: {
     local: [],
+    localAutoIncrement: 0,
     mona: [],
   },
   reducers: {
     addLocal: (state, action) => {
       const listLocal = [...state.local];
+      const aid = (state.localAutoIncrement * 1) + 1;
       listLocal.unshift({
-        id: listLocal.length + 1,
+        id: aid,
         ...action.payload,
       });
-      return { ...state, local: listLocal };
+      return { ...state, local: listLocal, localAutoIncrement: aid };
     },
     removeLocal: (state, action) => {
       // payload为id

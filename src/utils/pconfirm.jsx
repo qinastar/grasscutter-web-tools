@@ -7,9 +7,9 @@ import P from 'prop-types';
 
 const noopOk = () => true;
 
-function PromptConfirm(props, ref) {
+const PromptConfirm = forwardRef((props, ref) => {
   const {
-    messageText, requireInput, onOk = noopOk, onCancel = noop, title,
+    placeholder, maxLength, messageText, requireInput, onOk = noopOk, onCancel = noop, title,
   } = props;
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -57,10 +57,10 @@ function PromptConfirm(props, ref) {
       <Typography.Paragraph>
         <Typography.Text>{messageText}</Typography.Text>
       </Typography.Paragraph>
-      <Input value={userInputText} onChange={(e) => setUserInputText(e.target.value)} placeholder="请输入" />
+      <Input maxLength={maxLength} value={userInputText} onChange={(e) => setUserInputText(e.target.value)} placeholder={placeholder || `请输入内容(${maxLength}字以内)`} />
     </Modal>
   );
-}
+});
 
 PromptConfirm.propTypes = {
   title: P.string,
@@ -68,6 +68,8 @@ PromptConfirm.propTypes = {
   requireInput: P.bool,
   onOk: P.func,
   onCancel: P.func,
+  maxLength: P.number,
+  placeholder: P.string,
 };
 
 PromptConfirm.defaultProps = {
@@ -76,6 +78,8 @@ PromptConfirm.defaultProps = {
   requireInput: false,
   onOk: noopOk,
   onCancel: noop,
+  maxLength: 15,
+  placeholder: '',
 };
 
-export default forwardRef(PromptConfirm);
+export default PromptConfirm;

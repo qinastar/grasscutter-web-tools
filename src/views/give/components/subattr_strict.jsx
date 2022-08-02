@@ -1,10 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect, useMemo, useRef, useState 
+} from 'react';
 import P from 'prop-types';
 import SubAttrInput from '@views/give/components/subattr_input';
 import {
   Button, message, Divider
 } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { isArray, isEmpty } from 'lodash';
 import {
   ArtifactSubAttrCateLimitation,
   ArtifactSubAttrFullCateNeedLevel, ArtifactSubAttrsExcludeByMaster
@@ -13,71 +16,77 @@ import {
 const DefaultGroupEntity = {
   group: '', codes: {}, value: '', transfer: false, outputValue: 0,
 };
+const getDefaultGroupEntity = () => {
+  return {
+    key: `${Math.random()}`,
+    ...DefaultGroupEntity,
+  };
+};
 
 // 以副词条为基准，可以自由选择是填词还是填
 function SubAttrStrict({
-  starLevel, artLevel, onChange, artifactMainAttrName,
+  starLevel, artLevel, onChange, artifactMainAttrName, startupList,
 }) {
-  const [subAttrList, setSubAttrList] = useState([{ ...DefaultGroupEntity }]);
+  const [subAttrList, setSubAttrList] = useState([getDefaultGroupEntity()]);
+  const subAttrListRef = useRef(startupList || [getDefaultGroupEntity()]);
 
   useEffect(() => {
+    if (!isEmpty(startupList) && isArray(startupList)) {
+      subAttrListRef.current = startupList;
+      setSubAttrList([...startupList]);
+    }
+  }, [startupList]);
+
+  useEffect(() => {
+    subAttrListRef.current = subAttrList;
     onChange(subAttrList);
   }, [subAttrList]);
   
   useEffect(() => {
-    let validLength = ArtifactSubAttrCateLimitation[starLevel]; // 圣遗物最大词条种类数
+    // console.log(artifactMainAttrName, subAttrList, 'rlist_first');
+    let validLength = ArtifactSubAttrCateLimitation[starLevel];  // 圣遗物最大词条种类数
     if (artLevel < ArtifactSubAttrFullCateNeedLevel[starLevel]) { // 如果等级不足，减掉
       validLength -= Math.floor((ArtifactSubAttrFullCateNeedLevel[starLevel] - artLevel) / 4.0);
     }
-    let rList = [...subAttrList];
+    let rList = [...subAttrListRef.current];
+    let changed = false;
     if (subAttrList.length > validLength) {
       // 如果超过了当前圣遗物品质下的最多词条数，减掉
       rList = rList.slice(0, validLength);
+      changed = true;
     }
     // 移除不合法的词条
     const rejectGroup = ArtifactSubAttrsExcludeByMaster[artifactMainAttrName] || '';
     if (rejectGroup) {
-      rList = rList.filter((item) => item.group !== rejectGroup);
+      rList = rList.filter((item) => {
+        const r = item.group !== rejectGroup;
+        if (!r) { changed = true; }
+        return r;
+      });
     }
 
     if (rList.length < 1) {
-      rList.push({ ...DefaultGroupEntity });
+      rList.push(getDefaultGroupEntity());
+      changed = true;
     }
-
-    setSubAttrList(rList);
-  }, [starLevel, artifactMainAttrName]);
+    if (changed) {
+      setSubAttrList(rList);
+    }
+  }, [subAttrListRef, starLevel, artLevel, artifactMainAttrName]);
 
   const selectedGroups = useMemo(() => {
     return subAttrList.map((item) => item.group);
   }, [subAttrList]);
 
-  // useEffect(() => {
-  //
-  // }, [starLevel]);
-
-  // 当前等级下最大词条数
-  // const maxSubAttrCount = useMemo(() => {
-  //   const maxT = ArtifactUpdateTimeLimitation[starLevel];
-  //   const artUpdateTimes = Math.floor(artLevel / 4.0);
-  //   return maxT - artUpdateTimes;
-  // }, [starLevel, artLevel]);
-
   const handleAddSubAttr = () => {
-    // if (subAttrList.length >= ArtifactSubAttrCateLimitation[starLevel]) {
-    //   message.error('已达到词条种类限制，如果要添加请使用自由模式');
-    //   return;
-    // }
     const r = [...subAttrList];
-    r.push({ ...DefaultGroupEntity });
+    r.push(getDefaultGroupEntity());
     setSubAttrList(r);
   };
 
   const handleRemoveSubAttr = (index) => () => {
     const r = [...subAttrList];
     r.splice(index, 1);
-    if (r.length < 1) {
-      r.push({ ...DefaultGroupEntity });
-    }
     setSubAttrList(r);
   };
 
@@ -89,8 +98,7 @@ function SubAttrStrict({
 
   return <>
     {subAttrList.map((subItem, index) => {
-      const fKey = `subItem_${subItem.group}_${index}`;
-      return <div key={fKey}>
+      return <div key={subItem.key}>
         <SubAttrInput
           index={index}
           defaultOptions={subItem}
@@ -115,6 +123,7 @@ function SubAttrStrict({
 SubAttrStrict.propTypes = {
   artLevel: P.number,
   starLevel: P.number,
+  startupList: P.arrayOf(P.shape({})),
   artifactMainAttrName: P.string,
   onChange: P.func.isRequired,
 };
@@ -122,6 +131,7 @@ SubAttrStrict.propTypes = {
 SubAttrStrict.defaultProps = {
   starLevel: 0,
   artLevel: 20,
+  startupList: null,
   artifactMainAttrName: '',
 };
 

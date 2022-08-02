@@ -4,7 +4,7 @@ import {
   Col, Form, InputNumber, Row, Select, Space, Switch, Tooltip, Button, Typography
 } from 'antd';
 import { QuestionCircleFilled, DeleteFilled } from '@ant-design/icons';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import { ArtifactSubAttrCateMaxLimitation, ArtifactSubAttrsExcludeByMaster } from '@/constants/artifact_limitation';
 import ArtifactSubAttrsMapping from '@/constants/artifact_sub_attrs_map.json';
 import ArtifactSubAttrsGroupMapping from '@/constants/artifact_sub_attrs_group_map.json';
@@ -18,10 +18,10 @@ function SubAttrInput({
   selectedGroups,
   artifactMainAttrName,
 }) {
-  const [transfer, setTransfer] = useState(defaultOptions.transfer);
-  const [codes, setCodes] = useState(defaultOptions.codes);
-  const [group, setGroup] = useState(defaultOptions.group);
-  const [tValue, setTValue] = useState(defaultOptions.value);
+  const [transfer, setTransfer] = useState(defaultOptions?.transfer ?? false);
+  const [codes, setCodes] = useState(defaultOptions?.codes ?? {});
+  const [group, setGroup] = useState(defaultOptions?.group ?? '');
+  const [value, setTValue] = useState(defaultOptions?.value ?? '');
   const [outputValue, setOutputValue] = useState(0);
   const [isPercent, setIsPercent] = useState(false);
 
@@ -32,12 +32,16 @@ function SubAttrInput({
       group,
       transfer,
       outputValue,
+      value,
+      isPercent,
     });
   }, [
     codes,
     group,
     transfer,
-    outputValue
+    outputValue,
+    value,
+    isPercent
   ]);
 
   // 副词条组
@@ -70,12 +74,39 @@ function SubAttrInput({
 
   // 子词条列表变化时，重置词条
   useEffect(() => {
+    let isChanged = false;
     const r = {};
-    subAttrsWordList.forEach((item) => {
-      r[item.value] = 0;
+    const validKeys = subAttrsWordList.map((item) => item.value);
+    Object.keys(codes).forEach((key) => {
+      if (validKeys.includes(key)) {
+        r[key] = codes[key];
+      } else {
+        isChanged = true;
+      }
     });
-    setCodes(r);
-  }, [subAttrsWordList]);
+    subAttrsWordList.forEach((item) => {
+      if (r[item.value] === undefined || r[item.value] === null) {
+        r[item.value] = 0;
+        isChanged = true;
+      }
+    });
+    if (isChanged) {
+      setCodes(r);
+    }
+  }, [codes, subAttrsWordList]);
+
+  // 输出数值计算
+  const outputValueCalc = useMemo(() => {
+    let sum = 0;
+    subAttrsWordList.forEach((word) => {
+      sum += word.meta.value * codes[word.value];
+    });
+    return isPercent ? sum.toFixed(1) : sum;
+  }, [codes, subAttrsWordList]);
+
+  useEffect(() => {
+    setOutputValue(outputValueCalc);
+  }, [outputValueCalc]);
 
   const handleSubAttrTransferModeChange = (val) => {
     setTransfer(val);
@@ -107,11 +138,11 @@ function SubAttrInput({
 
   // 推测模式数值计算
   useEffect(() => {
-    if (!transfer || !tValue) return;
+    if (!transfer || !value) return;
     const valueSet = subAttrsGroup?.valueSet ?? [];
     if (isEmpty(valueSet)) return;
     const targetSet = valueSet.filter(
-      (item) => Math.floor(item.value * 10) <= Math.floor(tValue * 10)
+      (item) => Math.floor(item.value * 10) <= Math.floor(value * 10)
     );
     if (targetSet.length > 0) {
       const target = targetSet[targetSet.length - 1];
@@ -124,16 +155,7 @@ function SubAttrInput({
       });
       setCodes(r);
     }
-  }, [transfer, tValue, subAttrsWordList, subAttrsGroup]);
-
-  // 输出数值计算
-  useEffect(() => {
-    let sum = 0;
-    subAttrsWordList.forEach((word) => {
-      sum += word.meta.value * codes[word.value];
-    });
-    setOutputValue(isPercent ? sum.toFixed(1) : sum);
-  }, [codes, subAttrsWordList]);
+  }, [transfer, value, subAttrsWordList, subAttrsGroup]);
 
   const handleSubAttrGroupChange = (val) => {
     setGroup(val);
@@ -156,10 +178,10 @@ function SubAttrInput({
             disabled={!transfer}
             min={0}
             max={subAttrValueMax}
-            value={tValue}
-            onChange={(val) => setTValue(val)}
-            formatter={(value) => (isPercent ? `${value}%` : value.replace('%', ''))}
-            parser={(value) => value?.replace('%', '')}
+            value={value}
+            onChange={(val) => setTValue(`${val}`)}
+            formatter={(tValue) => (isPercent ? `${tValue}%` : tValue.replace('%', ''))}
+            parser={(tValue) => tValue?.replace('%', '')}
           />
           <Typography.Text>
             最终数值： {outputValue}{isPercent ? '%' : ''}
@@ -201,6 +223,7 @@ function SubAttrInput({
 SubAttrInput.propTypes = {
   index: P.number.isRequired,
   defaultOptions: P.shape({
+    key: P.string,
     group: P.string,
     codes: P.shape({}),
     value: P.string,    // 推测模式手动填写的数值
