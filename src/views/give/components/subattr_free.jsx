@@ -6,6 +6,7 @@ import {
   Row, Col, List, Tree, Typography, Button, Badge, Space
 } from 'antd';
 import useClick from '@react-hook/click';
+import { isEmpty } from 'lodash';
 import ArtifactSubAttrsRaw from '@/constants/artifact_sub_attrs_raw.json';
 
 // {
@@ -14,8 +15,13 @@ import ArtifactSubAttrsRaw from '@/constants/artifact_sub_attrs_raw.json';
 //   value: '',  // 代码
 // };
 
-function SubAttrFreeList({ onChange }) {
+function SubAttrFreeList({ onChange, startupList }) {
   const [subAttrList, setSubAttrList] = useState([]);
+  useEffect(() => {
+    if (!isEmpty(startupList)) {
+      setSubAttrList(startupList);
+    }
+  }, [startupList]);
   const handleDoubleClick = useClick('double', (e) => {
     const r = [...subAttrList];
     r.push(e.item);

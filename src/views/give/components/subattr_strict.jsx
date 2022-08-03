@@ -38,7 +38,6 @@ function SubAttrStrict({
   }, [startupList]);
 
   useEffect(() => {
-    subAttrListRef.current = subAttrList;
     onChange(subAttrList);
   }, [subAttrList]);
   
@@ -48,7 +47,7 @@ function SubAttrStrict({
     if (artLevel < ArtifactSubAttrFullCateNeedLevel[starLevel]) { // 如果等级不足，减掉
       validLength -= Math.floor((ArtifactSubAttrFullCateNeedLevel[starLevel] - artLevel) / 4.0);
     }
-    let rList = [...subAttrListRef.current];
+    let rList = [...subAttrList];
     let changed = false;
     if (subAttrList.length > validLength) {
       // 如果超过了当前圣遗物品质下的最多词条数，减掉
@@ -72,7 +71,7 @@ function SubAttrStrict({
     if (changed) {
       setSubAttrList(rList);
     }
-  }, [subAttrListRef, starLevel, artLevel, artifactMainAttrName]);
+  }, [subAttrList, starLevel, artLevel, artifactMainAttrName]);
 
   const selectedGroups = useMemo(() => {
     return subAttrList.map((item) => item.group);

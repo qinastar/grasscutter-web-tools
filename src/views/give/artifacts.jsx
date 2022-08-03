@@ -58,6 +58,7 @@ function GiveArtifactsPage() {
   const [subAttrList, setSubAttrList] = useState([]);
   const [subAttrListFree, setSubAttrListFree] = useState([]);
   const [startupList, setStartupList] = useState([]);
+  const [restoreData, setRestoreData] = useState(null);
   const confirmRef = useRef();
 
   const strictMode = useMemo(() => {
@@ -98,13 +99,15 @@ function GiveArtifactsPage() {
   }, [ArtifactGroupsRawDataList]);
 
   useEffect(() => {
-    setArtifactGroupId(null);
-    setArtifactStar(null);
-    setArtifactType(null);
-    setArtifactMainAttr(null);
-    setStartupList([]);
-    setSubAttrList([]);
-    setSubAttrListFree([]);
+    if (!restoreData) {
+      setArtifactGroupId(null);
+      setArtifactStar(null);
+      setArtifactType(null);
+      setArtifactMainAttr(null);
+      setStartupList([]);
+      setSubAttrList([]);
+      setSubAttrListFree([]);
+    }
   }, [strictMode]);
 
   const artifactGroup = useMemo(() => {
@@ -365,6 +368,7 @@ function GiveArtifactsPage() {
   ]);
 
   const handleRestoreArtifact = (item) => {
+    setRestoreData(item);
     setGeneratorMode(item.strictMode ? 'strict' : 'free');
     setArtifactGroupId(item.artifactGroupId);
     setArtifactStar(item.artifactStar);
@@ -385,7 +389,10 @@ function GiveArtifactsPage() {
         mode="horizontal"
         items={GeneratorModes}
         selectedKeys={[generatorMode]}
-        onSelect={({ key }) => setGeneratorMode(key)}
+        onSelect={({ key }) => {
+          setRestoreData(null);
+          setGeneratorMode(key);
+        }}
       />
       <div className="artifact-forms customized-scroll">
         <Form size="large">
@@ -463,12 +470,14 @@ function GiveArtifactsPage() {
             <Typography.Title level={4}>副词条设定</Typography.Title>
             <Divider className="no-top-margin" />
             {strictMode ? <SubAttrStrict
+              key={`${artifactGroup}_${artifactType}_${artifactMainAttrName}`}
               starLevel={currentStar}
               artLevel={artifactLevel}
               onChange={(s) => setSubAttrList(s)}
               startupList={startupList}
               artifactMainAttrName={artifactMainAttrName}
             /> : <SubAttrFreeList
+              startupList={startupList}
               onChange={(s) => setSubAttrListFree(s)}
             />}
           </> : null}
