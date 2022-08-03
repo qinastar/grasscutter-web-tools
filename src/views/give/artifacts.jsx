@@ -9,7 +9,7 @@ import { QuestionOutlined } from '@ant-design/icons';
 import { get, isEmpty } from 'lodash';
 import SubAttrStrict from '@views/give/components/subattr_strict';
 import SubAttrFreeList from '@views/give/components/subattr_free';
-import ArtifactFavList from '@views/give/components/fav_list';
+import ArtifactFavList from '@views/give/components/artifact_fav_list';
 import { useDispatch } from 'react-redux';
 import ArtifactGroupsRawData from '@/constants/artifact_groups_map.json';
 import ArtifactSubAttrsGroupMapping from '@/constants/artifact_sub_attrs_group_map.json';
@@ -82,13 +82,13 @@ function GiveArtifactsPage() {
       const [ef2, ef4] = [get(metas, 'effect2', ''), get(metas, 'effect4', '')];
       return {
         name: group.name,
-        label: <div className="artifact-group-item">
+        label: <div className="icon-selector-item">
           <Avatar src={get(metas, 'flower.url') || get(metas, 'head.url')} icon={<QuestionOutlined />} />
-          <div className="artifact-group-item-meta">
-            <div className="artifact-group-item-title">
+          <div className="icon-selector-item-meta">
+            <div className="icon-selector-item-title">
               {group.name}
             </div>
-            <div className="artifact-group-item-desc">
+            <div className="icon-selector-item-desc">
               {ef2 ? `(2)${ef2}` : ''}{ef4 ? ` (4)${ef4}` : ''}
             </div>
           </div>
@@ -166,13 +166,13 @@ function GiveArtifactsPage() {
           if (!firstCode) firstCode = code;
           codesList.push(code);
           return <Select.Option key={code} value={code}>
-            <div className="artifact-group-item">
+            <div className="icon-selector-item">
               <Avatar src={aAvatar} icon={<QuestionOutlined />} />
-              <div className="artifact-group-item-meta">
-                <div className="artifact-group-item-title">
+              <div className="icon-selector-item-meta">
+                <div className="icon-selector-item-title">
                   {aName} ({item.id})
                 </div>
-                <div className="artifact-group-item-desc">
+                <div className="icon-selector-item-desc">
                   {info.label}
                 </div>
               </div>
@@ -383,7 +383,7 @@ function GiveArtifactsPage() {
     }
   };
 
-  return <Layout.Content className="give-artifact-page">
+  return <Layout.Content className="give-items-page give-artifact-page">
     <div className="main-layout">
       <Menu
         mode="horizontal"
@@ -404,8 +404,8 @@ function GiveArtifactsPage() {
                   showSearch
                   filterOption={(input, option) => option.name
                     .toLowerCase().includes(input.toLowerCase())}
-                  className="artifact-group-selector"
-                  dropdownClassName="artifact-group-selector-dropdown"
+                  className="icon-selector"
+                  dropdownClassName="icon-selector-dropdown"
                   options={ArtifactGroupsOptions}
                   value={artifactGroupId}
                   onSelect={(val) => {
@@ -430,8 +430,8 @@ function GiveArtifactsPage() {
               <Form.Item label="部位">
                 <Select
                   placeholder="请选择"
-                  className="artifact-group-selector"
-                  dropdownClassName="artifact-group-selector-dropdown"
+                  className="icon-selector"
+                  dropdownClassName="icon-selector-dropdown"
                   value={artifactType}
                   onSelect={(val) => {
                     setArtifactType(val);
@@ -487,7 +487,7 @@ function GiveArtifactsPage() {
       <div className="command-layout">
         <Row>
           <Col flex="1 1 auto">
-            <Input size="large" value={calculatedCommand} placeholder="请先选择词条" />
+            <Input size="large" value={calculatedCommand} readOnly placeholder="请先选择圣遗物" />
           </Col>
           <Col flex="0 0 auto">
             <Button size="large" onClick={handleSaveArtifact}>存为预设</Button>
@@ -500,15 +500,17 @@ function GiveArtifactsPage() {
       <div className="preview-layout customized-scroll">
         <Typography.Title level={5}>主词条：{get(ArtifactMainAttrsMap, artifactMainAttr, '未知')}</Typography.Title>
         <Divider />
-        {strictMode ? (subAttrPreviewList.length
-          ? subAttrPreviewList.map((item) => <Typography.Paragraph key={`sub_attr_${item.name}`}>
-            <Typography.Text strong>{item.name}：</Typography.Text>
-            <Typography.Text>{item.value}{item.isPercent ? '%' : ''}</Typography.Text>
-          </Typography.Paragraph>)
-          : <Typography.Text>请先选择副词条</Typography.Text>)
-          : <Typography.Text>自由模式不支持预览</Typography.Text>}
+        {strictMode
+          ? <div>
+            {subAttrPreviewList.length
+              ? subAttrPreviewList.map((item) => <Typography.Paragraph key={`sub_attr_${item.name}`}>
+                <Typography.Text strong>{item.name}：</Typography.Text>
+                <Typography.Text>{item.value}{item.isPercent ? '%' : ''}</Typography.Text>
+              </Typography.Paragraph>)
+              : <Typography.Text>请先选择副词条</Typography.Text>}
+          </div> : <Typography.Text>自由模式不支持预览</Typography.Text>}
       </div>
-      <ArtifactFavList restoreArtifact={handleRestoreArtifact} />
+      <ArtifactFavList onRestore={handleRestoreArtifact} />
     </div>
   </Layout.Content>;
 }

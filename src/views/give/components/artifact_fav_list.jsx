@@ -11,18 +11,17 @@ import { get, pick } from 'lodash';
 import MonaArtifactMeta from '@/constants/mona/_gen_artifact';
 import { ArtifactFavListReducer } from '@/store/profiles';
 
-function ArtifactFavList({ restoreArtifact }) {
+function ArtifactFavList({ onRestore }) {
   const dispatch = useDispatch();
   const favList = useSelector((state) => state?.profiles?.artifactFavList?.local ?? []);
   const { ref: containerRef, height: containerHeight } = useResizeDetector();
 
   const favListForRender = useMemo(() => {
     return favList.map((fav) => {
-      const metas = get(MonaArtifactMeta, fav.artifactGroupId, {});
       return {
         ...pick(fav, ['id', 'artifactStar', 'artifactLevel']),
         ...pick(fav.meta, ['name', 'type', 'typeName', 'remark']),
-        avatar: get(metas, `${fav.meta?.key}.${fav.meta?.type}.url`),
+        avatar: get(MonaArtifactMeta, `${fav.meta?.key}.${fav.meta?.type}.url`),
         raw: fav,
       };
     });
@@ -33,11 +32,11 @@ function ArtifactFavList({ restoreArtifact }) {
   };
 
   const handleRestoreArtifact = (item) => () => {
-    restoreArtifact(item.raw);
+    onRestore(item.raw);
   };
 
   return <div className="fav-layout">
-    <Typography.Title className="title" level={5}>预设圣遗物</Typography.Title>
+    <Typography.Title className="title" level={5}>圣遗物预设</Typography.Title>
     <div className="list-layout customized-scroll" ref={containerRef}>
       <List>
         <VirtualList
@@ -49,9 +48,9 @@ function ArtifactFavList({ restoreArtifact }) {
           {(item) => (
             <List.Item key={`${item.id}`}>
               <List.Item.Meta
-                avatar={<Avatar icon={<QuestionOutlined />} />}
+                avatar={<Avatar src={item.avatar} icon={<QuestionOutlined />} />}
                 title={<a onClick={handleRestoreArtifact(item)}>
-                  {item.name} - {item.typeName}
+                  [{item.raw?.strictMode ? '严格' : '自由'}] {item.name} - {item.typeName}
                 </a>}
                 description={`${item.artifactStar}星, ${item.artifactLevel}级; ${item.remark}`}
               />
@@ -74,7 +73,7 @@ function ArtifactFavList({ restoreArtifact }) {
 }
 
 ArtifactFavList.propTypes = {
-  restoreArtifact: P.func.isRequired,
+  onRestore: P.func.isRequired,
 };
 
 export default ArtifactFavList;

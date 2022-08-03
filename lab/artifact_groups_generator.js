@@ -12537,7 +12537,7 @@ const artifact_codes = [
   }
 ];
 
-const monaArtifactMapping = require('./_gen_artifact').default;
+const monaArtifactMapping = require('./mona/_gen_artifact').default;
 
 const formattedData = [];
 const typeMapping = {

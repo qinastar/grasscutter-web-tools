@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import WebConsole from '@views/global/console';
 import GiveArtifactsPage from '@views/give/artifacts';
+import GiveWeaponPage from '@views/give/weapons';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
 
@@ -95,7 +96,7 @@ function App() {
               </Route>
               <Route path="/give">
                 <Route path="artifact" element={<GiveArtifactsPage />} />
-                <Route path="weapon" element={<div>weapon</div>} />
+                <Route path="weapon" element={<GiveWeaponPage />} />
                 <Route path="all" element={<div>all</div>} />
               </Route>
               <Route path="/avatar">

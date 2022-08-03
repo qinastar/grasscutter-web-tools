@@ -2,7 +2,7 @@
 @import "./size";
 @import "./fonts";
 
-.give-artifact-page {
+.give-items-page {
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -12,50 +12,6 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    .artifact-forms {
-      flex: 1 1 auto;
-      overflow: auto;
-      padding: $width-4;
-      .artifact-group-selector {
-        .artifact-group-item {
-          display: flex;
-          flex-direction: row;
-          .ant-avatar {
-            flex: 0 0 $width-7;
-            width: $width-7;
-            height: $width-7;
-            margin-top: $width-1;
-          }
-          &-meta {
-            flex: 1 1 auto;
-            padding-left: $padding-normal;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            word-break: break-all;
-            white-space: nowrap;
-            .artifact-group-item-desc {
-              display: none;
-            }
-          }
-        }
-      }
-      .ant-divider-horizontal.no-top-margin {
-        margin: 0 0 $width-6 0 !important;
-      }
-      .sub-attr-free-selector {
-        margin-top: $width-4;
-        height: $width-17;
-        overflow: hidden;
-        border: 1px solid $grey-8;
-        .ant-col {
-          overflow: auto;
-          height: 100%;
-          &:nth-child(2) {
-            border-left: 1px solid $grey-8;
-          }
-        }
-      }
-    }
     .command-layout {
       flex: 0 0 $width-8;
       .ant-input {
@@ -95,8 +51,64 @@
   }
 }
 
-.artifact-group-selector-dropdown {
-  .artifact-group-item {
+.give-artifact-page {
+  .artifact-forms {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: $width-4;
+    .ant-divider-horizontal.no-top-margin {
+      margin: 0 0 $width-6 0 !important;
+    }
+    .sub-attr-free-selector {
+      margin-top: $width-4;
+      height: $width-17;
+      overflow: hidden;
+      border: 1px solid $grey-8;
+      .ant-col {
+        overflow: auto;
+        height: 100%;
+        &:nth-child(2) {
+          border-left: 1px solid $grey-8;
+        }
+      }
+    }
+  }
+}
+
+.give-weapon-page {
+  .weapon-forms {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: $width-4;
+  }
+}
+
+.icon-selector {
+  .icon-selector-item {
+    display: flex;
+    flex-direction: row;
+    .ant-avatar {
+      flex: 0 0 $width-7;
+      width: $width-7;
+      height: $width-7;
+      margin-top: $width-1;
+    }
+    &-meta {
+      flex: 1 1 auto;
+      padding-left: $padding-normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      white-space: nowrap;
+      .icon-selector-item-desc {
+        display: none;
+      }
+    }
+  }
+}
+
+.icon-selector-dropdown {
+  .icon-selector-item {
     display: flex;
     flex-direction: row;
     .ant-avatar {

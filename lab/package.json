@@ -5,7 +5,8 @@
   "main": "artiface_code_mappings.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "artifact": "babel-node --presets env artiface_code_mappings.js\n"
+    "artifact": "babel-node --presets env artiface_code_mappings.js\n",
+    "weapon": "babel-node --presets env weapons_map.js\n"
   },
   "keywords": [],
   "author": "",
