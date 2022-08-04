@@ -93,7 +93,6 @@ function App() {
                 <Route path="fav" element={<SystemFavPage />} />
                 <Route path="scene" element={<div>scene</div>} />
                 <Route path="job" element={<div>scene</div>} />
-                <Route path="banner" element={<div>banner</div>} />
                 <Route path="account" element={<div>account</div>} />
               </Route>
               <Route path="/give">

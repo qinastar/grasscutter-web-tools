@@ -25,7 +25,6 @@ const navItems = [
     getItem('常用', '/system/fav'),
     getItem('场景', '/system/scene'),
     getItem('任务', '/system/job'),
-    getItem('卡池编辑器', '/system/banner'),
     getItem('用户', '/system/account')
   ]),
   getItem('物品指令', '/give', <InboxOutlined />, [
