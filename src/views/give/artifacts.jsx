@@ -10,7 +10,7 @@ import { get, isEmpty } from 'lodash';
 import SubAttrStrict from '@views/give/components/subattr_strict';
 import SubAttrFreeList from '@views/give/components/subattr_free';
 import ArtifactFavList from '@views/give/components/artifact_fav_list';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ArtifactGroupsRawData from '@/constants/artifact_groups_map.json';
 import ArtifactSubAttrsGroupMapping from '@/constants/artifact_sub_attrs_group_map.json';
 import ArtifactMainAttrs from '@/constants/artifact_main_attrs.json';
@@ -48,6 +48,8 @@ const ArtifactTypeNameMap = {
 
 function GiveArtifactsPage() {
   const dispatch = useDispatch();
+  const isWSConnected = useSelector((state) => state.system?.systemInfo?.isConnected);
+
   const [generatorMode, setGeneratorMode] = useState('strict');
   const [forUserId, setForUserId] = useState('');
   const [artifactGroupId, setArtifactGroupId] = useState(null);
@@ -293,7 +295,7 @@ function GiveArtifactsPage() {
   ]);
 
   // 发送give指令
-  const sendArtCommand = useCallback(() => {
+  const sendArtCommand = () => {
     if (!window.GCManageClient.isConnected()) {
       message.error('服务器未连接，无法发送');
       return;
@@ -303,7 +305,7 @@ function GiveArtifactsPage() {
       return;
     }
     window.GCManageClient.sendCMD(calculatedCommand);
-  }, [calculatedCommand]);
+  };
 
   // 词条预览
   const subAttrPreviewList = useMemo(() => {
@@ -383,7 +385,7 @@ function GiveArtifactsPage() {
     }
   };
 
-  return <Layout.Content className="give-items-page give-artifact-page">
+  return <Layout.Content className="common-page-layout give-artifact-page">
     <div className="main-layout">
       <Menu
         mode="horizontal"
@@ -491,7 +493,7 @@ function GiveArtifactsPage() {
           </Col>
           <Col flex="0 0 auto">
             <Button size="large" onClick={handleSaveArtifact}>存为预设</Button>
-            <Button size="large" type="primary" onClick={sendArtCommand}>执行生成</Button>
+            <Button size="large" type="primary" onClick={sendArtCommand} disabled={!isWSConnected}>执行生成</Button>
           </Col>
         </Row>
       </div>

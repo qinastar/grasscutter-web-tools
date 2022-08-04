@@ -101,7 +101,7 @@ function WebConsole() {
         onChange={(e) => setCommandText(e.target.value)}
         onKeyDown={handleKeyUp}
       />
-      <Dropdown.Button size="large" overlay={sendMenu} type="primary" onClick={sendCMD}>发送</Dropdown.Button>
+      <Dropdown.Button disabled={!isConnected} size="large" overlay={sendMenu} type="primary" onClick={sendCMD}>发送</Dropdown.Button>
     </div>
   </div>;
 }

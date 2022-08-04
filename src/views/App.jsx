@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import '@styles/give.scss';
+import '@styles/system.scss';
 import { Layout } from 'antd';
 import { HomePage } from '@views/global/home';
 import { AppSider } from '@views/global/sider';
@@ -11,6 +12,7 @@ import {
 import WebConsole from '@views/global/console';
 import GiveArtifactsPage from '@views/give/artifacts';
 import GiveWeaponPage from '@views/give/weapons';
+import SystemFavPage from '@views/system/fav';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
 
@@ -88,7 +90,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage startConnect={startConnect} stopConnect={stopConnect} />} />
               <Route path="/system">
-                <Route path="fav" element={<div>fav</div>} />
+                <Route path="fav" element={<SystemFavPage />} />
                 <Route path="scene" element={<div>scene</div>} />
                 <Route path="job" element={<div>scene</div>} />
                 <Route path="banner" element={<div>banner</div>} />

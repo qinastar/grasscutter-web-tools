@@ -100,13 +100,62 @@ body, html, #root {
   }
 }
 
-.customized-scroll::-webkit-scrollbar {
+.common-page-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow: hidden;
+  .main-layout {
+    flex: 1 1 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    .command-layout {
+      flex: 0 0 $width-8;
+      .ant-input {
+        border-radius: 0;
+      }
+      .ant-input {
+        border-radius: 0;
+      }
+    }
+  }
+  .right-layout {
+    flex: 0 0 $width-17;
+    border-left: 1px solid $grey-8;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .preview-layout {
+      flex: 0 0 $width-16;
+      padding: $width-4;
+      overflow: auto;
+    }
+    .fav-layout {
+      flex: 1 1 auto;
+      overflow: auto;
+      border-top: 1px solid $grey-8;
+      display: flex;
+      flex-direction: column;
+      .title {
+        flex: 0 0 auto;
+        padding: $width-4;
+      }
+      .list-layout {
+        flex: 1 1 auto;
+        padding: $width-2;
+      }
+    }
+  }
+}
+
+.customized-scroll::-webkit-scrollbar, .customized-scroll .ant-table-body::-webkit-scrollbar {
   width: 10px;
 }
-.customized-scroll::-webkit-scrollbar-track {
+.customized-scroll::-webkit-scrollbar-track, .customized-scroll .ant-table-body::-webkit-scrollbar-track {
   background: $black-8;
 }
-.customized-scroll::-webkit-scrollbar-thumb {
+.customized-scroll::-webkit-scrollbar-thumb, .customized-scroll .ant-table-body::-webkit-scrollbar-thumb {
   background: $blue-8;
   border-radius: $width-2;
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);

@@ -14,6 +14,7 @@ module.exports = {
   },
   rules: {
     'import/no-import-module-exports': 'off',
+    'react/jsx-props-no-spreading': 'off',
     'no-console': 'warn',
     'no-nested-ternary': 'warn',
     'import/no-unresolved': 'off',
@@ -61,7 +62,7 @@ module.exports = {
       {
         ignore: ['children'],
         customValidators: [],
-        skipUndeclared: false,
+        skipUndeclared: true,
       }
     ],
     'react/sort-comp': ['error', {

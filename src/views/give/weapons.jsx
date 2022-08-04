@@ -2,11 +2,11 @@ import React, {
   useMemo, useState, useCallback, useEffect 
 } from 'react';
 import {
-  Layout, Select, Form, Typography, Rate, Avatar, InputNumber, Row, Col, Input, Button, message
+  Layout, Select, Form, Rate, Avatar, InputNumber, Row, Col, Input, Button, message
 } from 'antd';
 import { get } from 'lodash';
 import { QuestionOutlined } from '@ant-design/icons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import WeaponFavList from '@views/give/components/weapon_fav_list';
 import WeaponRawList from '@/constants/weapons_map.json';
 import MonaWeaponMeta from '@/constants/mona/_gen_weapon';
@@ -30,6 +30,8 @@ const TypeOptions = [
 
 function GiveWeaponPage() {
   const dispatch = useDispatch();
+  const isWSConnected = useSelector((state) => state.system?.systemInfo?.isConnected);
+
   const [forUserId, setForUserId] = useState('');
   const [weaponKey, setWeaponKey] = useState('');
   const [weaponName, setWeaponName] = useState('');
@@ -112,7 +114,7 @@ function GiveWeaponPage() {
   ]);
 
   // 发送give指令
-  const sendWeaponCommand = useCallback(() => {
+  const sendWeaponCommand = () => {
     if (!window.GCManageClient.isConnected()) {
       message.error('服务器未连接，无法发送');
       return;
@@ -122,7 +124,7 @@ function GiveWeaponPage() {
       return;
     }
     window.GCManageClient.sendCMD(calculatedCommand);
-  }, [calculatedCommand]);
+  };
 
   const handleWeaponRestore = (item) => {
     setRestoreWeapon(item);
@@ -137,7 +139,7 @@ function GiveWeaponPage() {
     setWeaponKey(item.weaponKey);
   };
 
-  return <Layout.Content className="give-items-page give-weapon-page">
+  return <Layout.Content className="common-page-layout give-weapon-page">
     <div className="main-layout">
       <div className="weapon-forms customized-scroll">
         <Form size="large">
@@ -220,7 +222,7 @@ function GiveWeaponPage() {
           </Col>
           <Col flex="0 0 auto">
             <Button size="large" onClick={handleSaveWeapon}>存为预设</Button>
-            <Button size="large" type="primary" onClick={sendWeaponCommand}>执行生成</Button>
+            <Button size="large" type="primary" disabled={!isWSConnected} onClick={sendWeaponCommand}>执行生成</Button>
           </Col>
         </Row>
       </div>

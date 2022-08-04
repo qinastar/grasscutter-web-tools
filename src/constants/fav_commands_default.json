@@ -1,0 +1,200 @@
+[
+  {
+    "id": 1,
+    "name": "开启无敌",
+    "command": "/prop god on",
+    "system": true
+  },
+  {
+    "id": 2,
+    "name": "开启无限体力",
+    "command": "/prop ns on",
+    "system": true
+  },
+  {
+    "id": 3,
+    "name": "开启无限能量",
+    "command": "/prop ue on",
+    "system": true
+  },
+  {
+    "id": 4,
+    "name": "升到60级",
+    "command": "/give 102 x1880200",
+    "system": true
+  },
+  {
+    "id": 5,
+    "name": "升到90级",
+    "command": "/give 102 x8360000",
+    "system": true
+  },
+  {
+    "id": 6,
+    "name": "设置世界等级",
+    "command": "/prop wl 8",
+    "system": true
+  },
+  {
+    "id": 7,
+    "name": "一键解锁深渊",
+    "command": "/prop ut 12",
+    "system": true
+  },
+  {
+    "id": 8,
+    "name": "设置纪行等级",
+    "command": "/prop bp 50",
+    "system": true
+  },
+  {
+    "id": 9,
+    "name": "设置好感等级",
+    "command": "/setfetterlevel 10",
+    "system": true
+  },
+  {
+    "id": 10,
+    "name": "回满生命值",
+    "command": "/h",
+    "system": true
+  },
+  {
+    "id": 11,
+    "name": "自杀",
+    "command": "/kill 0",
+    "system": true
+  },
+  {
+    "id": 12,
+    "name": "全队充能",
+    "command": "/spawn 2008 25",
+    "system": true
+  },
+  {
+    "id": 13,
+    "name": "显示坐标",
+    "command": "/pos",
+    "system": true
+  },
+  {
+    "id": 14,
+    "name": "获得所有物品",
+    "command": "/give all x9999 lv90 c6 r5",
+    "system": true
+  },
+  {
+    "id": 15,
+    "name": "1万纠缠之缘",
+    "command": "/give 223 x10000",
+    "system": true
+  },
+  {
+    "id": 16,
+    "name": "1万相遇之缘",
+    "command": "/give 224 x10000",
+    "system": true
+  },
+  {
+    "id": 17,
+    "name": "10万原石",
+    "command": "/give 201 x100000",
+    "system": true
+  },
+  {
+    "id": 18,
+    "name": "1亿摩拉",
+    "command": "/give 202 x100000000",
+    "system": true
+  },
+  {
+    "id": 19,
+    "name": "重载配置",
+    "command": "/reload",
+    "system": true
+  },
+  {
+    "id": 20,
+    "name": "重新登录",
+    "command": "/kick",
+    "system": true
+  },
+  {
+    "id": 21,
+    "name": "清空当前角色命之座(需重新登录)",
+    "command": "/resetconst",
+    "system": true
+  },
+  {
+    "id": 22,
+    "name": "清空全部角色命之座(需重新登录)",
+    "command": "/resetconst all",
+    "system": true
+  },
+  {
+    "id": 23,
+    "name": "清空背包",
+    "command": "/clear all lv90 r5 5*",
+    "system": true
+  },
+  {
+    "id": 24,
+    "name": "清空武器",
+    "command": "/clear wp lv90 r5 5*",
+    "system": true
+  },
+  {
+    "id": 25,
+    "name": "清空圣遗物",
+    "command": "/clear art lv20 5*",
+    "system": true
+  },
+  {
+    "id": 26,
+    "name": "清空材料",
+    "command": "/clear mat",
+    "system": true
+  },
+  {
+    "id": 27,
+    "name": "清场",
+    "command": "/killall",
+    "system": true
+  },
+  {
+    "id": 28,
+    "name": "进入多人模式",
+    "command": "/coop",
+    "system": true
+  },
+  {
+    "id": 29,
+    "name": "集合",
+    "command": "/tpall",
+    "system": true
+  },
+  {
+    "id": 30,
+    "name": "列举用户",
+    "command": "/list uid",
+    "system": true
+  },
+  {
+    "id": 31,
+    "name": "发送广播",
+    "command": "/say 广播消息",
+    "system": true
+  },
+  {
+    "id": 32,
+    "name": "服务器公告",
+    "command": "/a 欢迎使用Grasscutter!",
+    "system": true
+  },
+  {
+    "id": 33,
+    "name": "关闭服务器",
+    "command": "/stop",
+    "system": true
+  }
+]
