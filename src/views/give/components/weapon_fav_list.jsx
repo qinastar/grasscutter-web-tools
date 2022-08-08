@@ -1,13 +1,12 @@
-import React, { useMemo } from 'react';
+import React  from 'react';
 import P from 'prop-types';
 import {
-  Avatar, Button, List, Typography, Popconfirm
+  Avatar, Button, List, Popconfirm
 } from 'antd';
 import { DeleteFilled, QuestionOutlined } from '@ant-design/icons';
-import VirtualList from 'rc-virtual-list';
 import { useDispatch, useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
-import { get, pick } from 'lodash';
+import { get } from 'lodash';
 import { WeaponFavListReducer } from '@/store/profiles';
 import MonaWeaponMeta from '@/constants/mona/_gen_weapon';
 
@@ -28,7 +27,7 @@ function WeaponFavList({ onRestore }) {
     dispatch(WeaponFavListReducer.actions.removeLocal(id));
   };
 
-  const handleRestoreArtifact = (item) => () => {
+  const handleRestoreWeapon = (item) => () => {
     onRestore(item);
   };
   
@@ -42,7 +41,7 @@ function WeaponFavList({ onRestore }) {
           return <List.Item key={`${item.id}`}>
             <List.Item.Meta
               avatar={<Avatar src={metas?.url} icon={<QuestionOutlined />} />}
-              title={<a onClick={handleRestoreArtifact(item)}>
+              title={<a onClick={handleRestoreWeapon(item)}>
                 {metas?.chs || item.weaponName}&nbsp;
                 [{item.weaponStar}星{TypeNamesMap[item.weaponType]}]
               </a>}
