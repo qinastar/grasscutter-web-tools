@@ -28,6 +28,16 @@
 }
 
 .give-weapon-page {
+  .fav-layout {
+    overflow: hidden !important;
+    border: 0 !important;
+    .list-layout {
+      overflow: auto;
+    }
+    .ant-typography.title {
+      border-bottom: 1px solid $grey-8;
+    }
+  }
   .weapon-forms {
     flex: 1 1 auto;
     overflow: auto;
@@ -41,17 +51,34 @@
     overflow: auto;
     padding: $width-4;
   }
-  .title-bar {
-    display: flex;
-    flex-direction: row;
-    .left-area {
+  &.common-page-layout > .right-layout {
+    flex: 0 0 $width-18;
+  }
+  .fav-layout {
+    overflow: hidden !important;
+    border: 0 !important;
+    .fav-list-container {
       flex: 1 1 auto;
+      overflow: hidden;
     }
-    .right-area {
-      text-align: right;
-      padding-right: $padding-normal;
-      flex: 0 0 $width-12;
-      line-height: $width-10;
+    .title-bar {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: row;
+      border-bottom: 1px solid $grey-8;
+      .left-area {
+        flex: 1 1 auto;
+        line-height: $width-10;
+        font-size: $font-size-3;
+        padding-left: $padding-normal;
+        font-weight: $font-weight-border;
+      }
+      .right-area {
+        text-align: right;
+        padding-right: $padding-normal;
+        flex: 0 0 $width-12;
+        line-height: $width-10;
+      }
     }
   }
 }

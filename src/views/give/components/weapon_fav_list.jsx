@@ -31,42 +31,36 @@ function WeaponFavList({ onRestore }) {
   const handleRestoreArtifact = (item) => () => {
     onRestore(item);
   };
-
+  
   return <div className="fav-layout">
-    <Typography.Title className="title" level={5}>武器预设</Typography.Title>
+    <div className="title-bar">武器预设</div>
     <div className="list-layout customized-scroll" ref={containerRef}>
-      <List>
-        <VirtualList
-          data={favList}
-          height={containerHeight}
-          itemHeight={47}
-          itemKey="id"
-        >
-          {(item) => {
-            const metas = get(MonaWeaponMeta, item.weaponKey, {});
-            return <List.Item key={`${item.id}`}>
-              <List.Item.Meta
-                avatar={<Avatar src={metas?.url} icon={<QuestionOutlined />} />}
-                title={<a onClick={handleRestoreArtifact(item)}>
-                  {metas?.chs || item.weaponName}&nbsp;
-                  [{item.weaponStar}星{TypeNamesMap[item.weaponType]}]
-                </a>}
-                description={`${item.weaponCount}个; ${item.weaponLevel}级; 精炼${item.weaponRefine}`}
-              />
-              <Popconfirm
-                title="确定要删除这个武器预设记录吗？数据不可恢复"
-                onConfirm={handleRemove(item.id)}
-                okText="是"
-                cancelText="否"
-              >
-                <Button type="text" danger>
-                  <DeleteFilled /> 删除
-                </Button>
-              </Popconfirm>
-            </List.Item>;
-          }}
-        </VirtualList>
-      </List>
+      <List
+        dataSource={favList}
+        renderItem={(item) => {
+          const metas = get(MonaWeaponMeta, item.weaponKey, {});
+          return <List.Item key={`${item.id}`}>
+            <List.Item.Meta
+              avatar={<Avatar src={metas?.url} icon={<QuestionOutlined />} />}
+              title={<a onClick={handleRestoreArtifact(item)}>
+                {metas?.chs || item.weaponName}&nbsp;
+                [{item.weaponStar}星{TypeNamesMap[item.weaponType]}]
+              </a>}
+              description={`${item.weaponCount}个; ${item.weaponLevel}级; 精炼${item.weaponRefine}`}
+            />
+            <Popconfirm
+              title="确定要删除这个武器预设记录吗？数据不可恢复"
+              onConfirm={handleRemove(item.id)}
+              okText="是"
+              cancelText="否"
+            >
+              <Button type="text" danger>
+                <DeleteFilled /> 删除
+              </Button>
+            </Popconfirm>
+          </List.Item>;
+        }}
+      />
     </div>
   </div>;
 }

@@ -141,6 +141,7 @@ function GiveWeaponPage() {
 
   return <Layout.Content className="common-page-layout give-weapon-page">
     <div className="main-layout">
+      <div className="title-bar">武器参数</div>
       <div className="weapon-forms customized-scroll">
         <Form size="large">
           <Form.Item label="类型">

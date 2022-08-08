@@ -42,6 +42,7 @@ function GiveAllPage() {
 
   return <Layout.Content className="common-page-layout give-all-page">
     <div className="main-layout">
+      <div className="title-bar">物品参数</div>
       <div className="goods-forms customized-scroll">
         <Form size="large">
           <Form.Item label="物品">
@@ -101,7 +102,7 @@ function GiveAllPage() {
       <div className="fav-layout">
         <div className="title-bar">
           <div className="left-area">
-            <Typography.Title className="title" level={5}>物品预设</Typography.Title>
+            物品预设
           </div>
           <div className="right-area">
             <Button type="primary" disabled={!isWSConnected}>
@@ -109,6 +110,7 @@ function GiveAllPage() {
             </Button>
           </div>
         </div>
+        <div className="fav-list-container" />
       </div>
     </div>
   </Layout.Content>;

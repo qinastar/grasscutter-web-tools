@@ -36,7 +36,7 @@ function ArtifactFavList({ onRestore }) {
   };
 
   return <div className="fav-layout">
-    <Typography.Title className="title" level={5}>圣遗物预设</Typography.Title>
+    <div className="title-bar">圣遗物预设</div>
     <div className="list-layout customized-scroll" ref={containerRef}>
       <List>
         <VirtualList
