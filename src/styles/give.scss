@@ -35,6 +35,27 @@
   }
 }
 
+.give-all-page {
+  .goods-forms {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: $width-4;
+  }
+  .title-bar {
+    display: flex;
+    flex-direction: row;
+    .left-area {
+      flex: 1 1 auto;
+    }
+    .right-area {
+      text-align: right;
+      padding-right: $padding-normal;
+      flex: 0 0 $width-12;
+      line-height: $width-10;
+    }
+  }
+}
+
 .icon-selector {
   .icon-selector-item {
     display: flex;

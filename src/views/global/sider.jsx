@@ -4,7 +4,7 @@ import {
   CloudServerOutlined,
   HomeOutlined,
   InboxOutlined,
-  UserOutlined
+  BugOutlined
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
@@ -21,21 +21,19 @@ function getItem(label, key, icon, children) {
 
 const navItems = [
   getItem('首页', '/', <HomeOutlined />),
-  getItem('系统指令', '/system', <CloudServerOutlined />, [
+  getItem('系统', '/system', <CloudServerOutlined />, [
     getItem('常用', '/system/fav'),
     getItem('场景', '/system/scene'),
     getItem('任务', '/system/job'),
-    getItem('用户', '/system/account')
+    getItem('用户', '/system/account'),
+    getItem('角色', '/system/character')
   ]),
-  getItem('物品指令', '/give', <InboxOutlined />, [
+  getItem('物品', '/give', <InboxOutlined />, [
     getItem('圣遗物', '/give/artifact'),
     getItem('武器', '/give/weapon'),
     getItem('其他', '/give/all')
   ]),
-  getItem('角色指令', '/avatar', <UserOutlined />, [
-    getItem('角色', '/avatar/character'),
-    getItem('怪物', '/avatar/monster')
-  ])
+  getItem('召唤生物', '/spawn', <BugOutlined />)
   // getItem('控制台', '/console', <CodeOutlined />),
   // getItem('设置', '/setting', <SettingOutlined />)
 ];

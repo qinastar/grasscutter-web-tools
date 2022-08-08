@@ -13,6 +13,7 @@ import WebConsole from '@views/global/console';
 import GiveArtifactsPage from '@views/give/artifacts';
 import GiveWeaponPage from '@views/give/weapons';
 import SystemFavPage from '@views/system/fav';
+import GiveAllPage from '@views/give/all';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
 
@@ -98,7 +99,7 @@ function App() {
               <Route path="/give">
                 <Route path="artifact" element={<GiveArtifactsPage />} />
                 <Route path="weapon" element={<GiveWeaponPage />} />
-                <Route path="all" element={<div>all</div>} />
+                <Route path="all" element={<GiveAllPage />} />
               </Route>
               <Route path="/avatar">
                 <Route path="character" element={<div>character</div>} />
