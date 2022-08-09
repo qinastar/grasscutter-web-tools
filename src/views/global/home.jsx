@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import P from 'prop-types';
 import {
-  Typography, Input, Button, Checkbox, Space, message, Divider, Row, Col, Progress
+  Typography, Input, Button, Checkbox, Space, message, Divider, Row, Col, Progress, Form, Select
 } from 'antd';
 import { useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
@@ -12,6 +12,7 @@ export function HomePage({ startConnect, stopConnect }) {
   const gcSetting = useSelector((state) => state?.settings?.grasscutterConnection);
   const [wssUrl, setWssUrl] = useState(gcSetting?.wssUrl ?? '');
   const [autoConn, setAutoConn] = useState(gcSetting?.autoConn ?? false);
+  const [targetUID, setTargetUID] = useState('');
   const systemInfo = useSelector((state) => state.system?.systemInfo ?? {});
   const isConnected = systemInfo?.isConnected;
   const isConnecting = systemInfo?.isConnecting;
@@ -53,6 +54,26 @@ export function HomePage({ startConnect, stopConnect }) {
     startConnect(wssUrl, autoConn);
   };
 
+  // 发送指令
+  const setTargetUIDCommand = () => {
+    if (!window.GCManageClient.isConnected()) {
+      message.error('服务器未连接，无法发送');
+      return;
+    }
+    if (!targetUID) {
+      message.error('请输入UID');
+      return;
+    }
+    window.GCManageClient.sendCMD(`/target ${targetUID}`);
+  };
+
+  const handleTargetUIDKeyUp = (e) => {
+    const isEnter = (e.code === 'Enter' || e.keyCode === 13);
+    if (isEnter) {
+      setTargetUIDCommand();
+    }
+  };
+
   return <div className="gwt-pages-home">
     <Typography.Title level={4}>连接服务器</Typography.Title>
     <Typography.Paragraph>
@@ -71,6 +92,15 @@ export function HomePage({ startConnect, stopConnect }) {
         </Checkbox>
       </Space>
     </Typography.Paragraph>
+    <Divider />
+    <Form layout="inline" size="large">
+      <Form.Item label="设置命令目标UID">
+        <Input placeholder="@" value={targetUID} onKeyDown={handleTargetUIDKeyUp} onChange={(e) => setTargetUID(e.target.value)} />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" onClick={setTargetUIDCommand}>设置</Button>
+      </Form.Item>
+    </Form>
     <Divider />
     {isConnected && <Row className="system-info-layout">
       <Col span={12}>

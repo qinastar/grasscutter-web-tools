@@ -60,7 +60,7 @@ function SpawnPage() {
     return ListMap[listType];
   }, [listType]);
 
-  // 发送give指令
+  // 发送指令
   const sendWeaponCommand = () => {
     if (!window.GCManageClient.isConnected()) {
       message.error('服务器未连接，无法发送');

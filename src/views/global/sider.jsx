@@ -23,10 +23,8 @@ const navItems = [
   getItem('首页', '/', <HomeOutlined />),
   getItem('系统', '/system', <CloudServerOutlined />, [
     getItem('常用', '/system/fav'),
-    getItem('场景', '/system/scene'),
-    getItem('任务', '/system/job'),
-    getItem('用户', '/system/account'),
-    getItem('角色', '/system/character')
+    getItem('任务 & 场景', '/system/scene'),
+    getItem('角色 & 用户', '/system/account')
   ]),
   getItem('物品', '/give', <InboxOutlined />, [
     getItem('圣遗物', '/give/artifact'),

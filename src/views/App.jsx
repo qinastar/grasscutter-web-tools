@@ -15,6 +15,8 @@ import GiveWeaponPage from '@views/give/weapons';
 import SystemFavPage from '@views/system/fav';
 import GiveAllPage from '@views/give/all';
 import SpawnPage from '@views/system/spawn';
+import SystemAccountPage from '@views/system/account';
+import SystemScenePage from '@views/system/scene';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
 
@@ -93,9 +95,8 @@ function App() {
               <Route path="/" element={<HomePage startConnect={startConnect} stopConnect={stopConnect} />} />
               <Route path="/system">
                 <Route path="fav" element={<SystemFavPage />} />
-                <Route path="scene" element={<div>scene</div>} />
-                <Route path="job" element={<div>scene</div>} />
-                <Route path="account" element={<div>account</div>} />
+                <Route path="scene" element={<SystemScenePage />} />
+                <Route path="account" element={<SystemAccountPage />} />
               </Route>
               <Route path="/give">
                 <Route path="artifact" element={<GiveArtifactsPage />} />

@@ -111,6 +111,9 @@ body, html, #root {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    .form-container {
+      padding: $padding-normal;
+    }
     > .title-bar {
       line-height: $width-10;
       font-size: $font-size-3;
