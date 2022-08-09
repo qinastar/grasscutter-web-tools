@@ -1,33 +1,39 @@
-import React, { useState, useMemo } from 'react';
-import {
-  Form, Select, Layout, InputNumber, Switch, Row, Col, Input, Button, message, Typography
-} from 'antd';
+import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Button, Col, Form, Input, InputNumber, Layout, message, Radio, Row, Select, Switch
+} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import GiveAllFavList from '@views/give/components/give_all_fav_list';
-import GoodsListOptions from '@/constants/goods.json';
 import { GiveAllFavListReducer } from '@/store/profiles';
+import AnimalList from '@/constants/animal.json';
+import MonsterList from '@/constants/monster.json';
+import NPCList from '@/constants/npc.json';
 
-function GiveAllPage() {
+const ListMap = {
+  animal: AnimalList,
+  monster: MonsterList,
+  npc: NPCList,
+};
+
+function SpawnPage() {
   const dispatch = useDispatch();
   const isWSConnected = useSelector((state) => state.system?.systemInfo?.isConnected);
 
+  const [listType, setListType] = useState('monster');
   const [itemCode, setItemCode] = useState(null);
   const [itemName, setItemName] = useState(null);
   const [itemCount, setItemCount] = useState(1);
   const [itemLevel, setItemLevel] = useState(1);
-  const [isDrop, setIsDrop] = useState(false);
   const [forUserId, setForUserId] = useState('');
 
   const calculatedCommand = useMemo(() => {
     if (!itemCode) return '';
-    return `/${isDrop ? 'drop' : 'give'}${forUserId ? ` @${forUserId}` : ''} ${itemCode} ${isDrop ? '' : 'x'}${itemCount}${isDrop ? '' : ` lv${itemLevel}`}`;
+    return `/spawn${forUserId ? ` @${forUserId}` : ''} ${itemCode} ${itemCount} lv${itemLevel}`;
   }, [
     forUserId,
     itemCode,
     itemCount,
-    itemLevel,
-    isDrop
+    itemLevel
   ]);
 
   const handleAddFav = () => {
@@ -36,7 +42,7 @@ function GiveAllPage() {
       return;
     }
     dispatch(GiveAllFavListReducer.actions.addLocal({
-      isDrop,
+      type: listType,
       code: itemCode,
       name: itemName,
       count: itemCount,
@@ -46,6 +52,12 @@ function GiveAllPage() {
     }));
     message.success('添加成功');
   };
+
+  const ListOptions = useMemo(() => {
+    setItemCode(null);
+    setItemName(null);
+    return ListMap[listType];
+  }, [listType]);
 
   // 发送give指令
   const sendWeaponCommand = () => {
@@ -62,14 +74,21 @@ function GiveAllPage() {
 
   return <Layout.Content className="common-page-layout give-all-page">
     <div className="main-layout">
-      <div className="title-bar">物品参数</div>
+      <div className="title-bar">召唤参数</div>
       <div className="goods-forms customized-scroll">
         <Form size="large">
-          <Form.Item label="物品">
+          <Form.Item label="类型">
+            <Radio.Group value={listType} onChange={(e) => setListType(e.target.value)}>
+              <Radio value="monster">讨伐对象</Radio>
+              <Radio value="animal">生物志</Radio>
+              <Radio value="npc">NPC</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item label="内容">
             <Select
-              options={GoodsListOptions}
+              options={ListOptions}
               showSearch
-              placeholder="请选择物品，支持搜索"
+              placeholder="请选择想要召唤的项目，支持搜索"
               optionFilterProp="label"
               filterOption={
                 (input, option) => option.label.toLowerCase().includes(input.toLowerCase())
@@ -94,14 +113,7 @@ function GiveAllPage() {
             min={1}
             max={90}
             value={itemLevel}
-            disabled={isDrop}
             onChange={(val) => setItemLevel(val)}
-          />
-        </Form.Item>
-        <Form.Item label="掉落">
-          <Switch
-            checked={isDrop}
-            onChange={(val) => setIsDrop(val)}
           />
         </Form.Item>
         <Form.Item label="用户">
@@ -125,9 +137,9 @@ function GiveAllPage() {
       </div>
     </div>
     <div className="right-layout">
-      <GiveAllFavList />
+      {/*<GiveAllFavList />*/}
     </div>
   </Layout.Content>;
 }
 
-export default GiveAllPage;
+export default SpawnPage;

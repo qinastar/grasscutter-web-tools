@@ -14,6 +14,7 @@ import GiveArtifactsPage from '@views/give/artifacts';
 import GiveWeaponPage from '@views/give/weapons';
 import SystemFavPage from '@views/system/fav';
 import GiveAllPage from '@views/give/all';
+import SpawnPage from '@views/system/spawn';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
 
@@ -101,10 +102,7 @@ function App() {
                 <Route path="weapon" element={<GiveWeaponPage />} />
                 <Route path="all" element={<GiveAllPage />} />
               </Route>
-              <Route path="/avatar">
-                <Route path="character" element={<div>character</div>} />
-                <Route path="monster" element={<div>monster</div>} />
-              </Route>
+              <Route path="/spawn" element={<SpawnPage />} />
             </Routes>
           </Layout.Content>
           <WebConsole />
