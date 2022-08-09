@@ -4,7 +4,8 @@ import {
   Button, Col, Form, Input, InputNumber, Layout, message, Radio, Row, Select, Switch
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { GiveAllFavListReducer } from '@/store/profiles';
+import SpawnFavList from '@views/system/components/spawn_fav_list';
+import { SpawnFavListReducer } from '@/store/profiles';
 import AnimalList from '@/constants/animal.json';
 import MonsterList from '@/constants/monster.json';
 import NPCList from '@/constants/npc.json';
@@ -41,7 +42,7 @@ function SpawnPage() {
       message.warn('请选择物品');
       return;
     }
-    dispatch(GiveAllFavListReducer.actions.addLocal({
+    dispatch(SpawnFavListReducer.actions.addLocal({
       type: listType,
       code: itemCode,
       name: itemName,
@@ -137,7 +138,7 @@ function SpawnPage() {
       </div>
     </div>
     <div className="right-layout">
-      {/*<GiveAllFavList />*/}
+      <SpawnFavList />
     </div>
   </Layout.Content>;
 }

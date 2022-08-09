@@ -73,6 +73,29 @@ export const GiveAllFavListReducer = createSlice({
   },
 });
 
+export const SpawnFavListReducer = createSlice({
+  name: 'spawnFavList',
+  initialState: {
+    local: [],
+    localAutoIncrement: 0,
+  },
+  reducers: {
+    addLocal: (state, action) => {
+      const listLocal = [...state.local];
+      const aid = (state.localAutoIncrement * 1) + 1;
+      listLocal.unshift({
+        id: aid,
+        ...action.payload,
+      });
+      return { ...state, local: listLocal, localAutoIncrement: aid };
+    },
+    removeLocal: (state, action) => {
+      const listLocal = [...state.local].filter((item) => item.id !== action.payload);
+      return { ...state, local: listLocal };
+    },
+  },
+});
+
 export const SystemFavCommandsReducer = createSlice({
   name: 'systemFavCommands',
   initialState: {
@@ -115,6 +138,7 @@ const UserProfileReducer = combineReducers({
   artifactFavList: ArtifactFavListReducer.reducer,
   weaponFavList: WeaponFavListReducer.reducer,
   giveAllFavList: GiveAllFavListReducer.reducer,
+  spawnFavList: SpawnFavListReducer.reducer,
   systemFavCommands: SystemFavCommandsReducer.reducer,
 });
 
