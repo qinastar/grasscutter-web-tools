@@ -91,10 +91,9 @@ function SystemAccountPage() {
           <Form.Item label="权限">
             <Select
               style={{ width: 320 }}
-              labelInValue
               options={PermOptionsList}
               value={permContent}
-              onSelect={(val) => setPermContent(val.value)}
+              onSelect={(val) => setPermContent(val)}
             />
           </Form.Item>
           <Form.Item>
