@@ -111,6 +111,9 @@ body, html, #root {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    .ant-form-inline {
+      margin-bottom: $width-4;
+    }
     .form-container {
       padding: $padding-normal;
     }

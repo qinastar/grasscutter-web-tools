@@ -98,7 +98,7 @@ export function HomePage({ startConnect, stopConnect }) {
         <Input placeholder="@" value={targetUID} onKeyDown={handleTargetUIDKeyUp} onChange={(e) => setTargetUID(e.target.value)} />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" onClick={setTargetUIDCommand}>设置</Button>
+        <Button type="primary" onClick={setTargetUIDCommand} disabled={!isConnected}>设置</Button>
       </Form.Item>
     </Form>
     <Divider />
