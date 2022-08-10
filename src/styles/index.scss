@@ -112,7 +112,9 @@ body, html, #root {
     display: flex;
     flex-direction: column;
     .ant-form-inline {
-      margin-bottom: $width-4;
+      .ant-form-item {
+        margin-bottom: $width-4;
+      }
     }
     .form-container {
       padding: $padding-normal;

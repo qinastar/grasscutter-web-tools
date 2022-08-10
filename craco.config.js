@@ -2,6 +2,7 @@ const path = require('path');
 // const { ESLINT_MODES } = require("@craco/craco");
 const webpack = require("webpack");
 const WebpackBar = require('webpackbar');
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
 const darkTheme = require('@ant-design/dark-theme').default;
 const CracoAntdPlugin = require('craco-antd');
 
@@ -28,7 +29,8 @@ module.exports = {
     },
     plugins: [
       new webpack.ProgressPlugin(),
-      new WebpackBar()
+      new WebpackBar(),
+      new AntdDayjsWebpackPlugin(),
     ],
   },
   jest: {
