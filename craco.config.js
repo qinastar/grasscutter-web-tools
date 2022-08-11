@@ -20,12 +20,17 @@ module.exports = {
     },
   ],
   webpack: {
+    configure: {
+      resolve: {
+        extensions: ['.js', '.jsx', '.json', '.png', '.webp', '.jpg'],
+      }
+    },
     alias: {
-      "@": path.resolve(__dirname, "src"),
       "@styles": path.resolve(__dirname, "src/styles"),
       "@images": path.resolve(__dirname, "src/images"),
       "@image": path.resolve(__dirname, "src/images"),
       "@views": path.resolve(__dirname, "src/views"),
+      "@": path.resolve(__dirname, "src"),
     },
     plugins: [
       new webpack.ProgressPlugin(),
