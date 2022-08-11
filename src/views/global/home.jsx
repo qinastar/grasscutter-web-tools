@@ -90,6 +90,10 @@ export function HomePage({ startConnect, stopConnect }) {
         >
           自动连接
         </Checkbox>
+        <Typography.Text>
+          插件安装：
+          <a href="https://github.com/liujiaqi7998/GrasscuttersWebDashboard" target="_blank" rel="noreferrer">https://github.com/liujiaqi7998/GrasscuttersWebDashboard</a>
+        </Typography.Text>
       </Space>
     </Typography.Paragraph>
     <Divider />
