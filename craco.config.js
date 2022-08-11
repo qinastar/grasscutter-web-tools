@@ -23,6 +23,9 @@ module.exports = {
     configure: {
       resolve: {
         extensions: ['.js', '.jsx', '.json', '.png', '.webp', '.jpg'],
+      },
+      output: {
+        publicPath: process.env.NODE_ENV === 'development' ? '/' : '/grasscutter-web-tools'
       }
     },
     alias: {

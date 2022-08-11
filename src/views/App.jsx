@@ -7,7 +7,7 @@ import { AppSider } from '@views/global/sider';
 import { useDispatch, useSelector } from 'react-redux';
 import ConnStatusBar from '@views/global/conn_bar';
 import {
-  BrowserRouter, Routes, Route
+  BrowserRouter, Routes, Route, HashRouter
 } from 'react-router-dom';
 import WebConsole from '@views/global/console';
 import GiveArtifactsPage from '@views/give/artifacts';
@@ -20,6 +20,8 @@ import SystemCharacterPage from '@views/system/character';
 import SystemScenePage from '@views/system/scene';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
+
+const RouterComponent = process.env.NODE_ENV === 'development' ? BrowserRouter : HashRouter;
 
 function App() {
   const dispatch = useDispatch();
@@ -80,7 +82,7 @@ function App() {
     dispatch(GrasscutterConnectionReducer.actions.update({ autoConn: false }));   // 持久化conn
   };
 
-  return <BrowserRouter>
+  return <RouterComponent>
     <Layout className="gwt-main-layout">
       <Layout.Header className="gwt-main-header">
         <div className="gwt-header-title">Grasscutter Web控制台</div>
@@ -112,7 +114,7 @@ function App() {
         </Layout.Content>
       </Layout>
     </Layout>
-  </BrowserRouter>;
+  </RouterComponent>;
 }
 
 export default App;

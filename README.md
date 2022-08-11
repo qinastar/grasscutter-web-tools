@@ -1,6 +1,8 @@
 <h1 align="center">Grasscutter Web Tools</h1>
 <p align="center">某除草机服务端管理工具Web版（React版本）</p>
 
+[在线预览](https://lancelrq.github.io/grasscutter-web-tools/)
+
 ## ✨ 特性
 
 - ✅ 图形化圣遗物配置
