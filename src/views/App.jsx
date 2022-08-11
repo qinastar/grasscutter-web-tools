@@ -16,6 +16,7 @@ import SystemFavPage from '@views/system/fav';
 import GiveAllPage from '@views/give/all';
 import SpawnPage from '@views/system/spawn';
 import SystemAccountPage from '@views/system/account';
+import SystemCharacterPage from '@views/system/character';
 import SystemScenePage from '@views/system/scene';
 import { GrasscutterConnectionReducer } from '@/store/settings';
 import { SystemInfoReducer } from '@/store/system';
@@ -96,6 +97,7 @@ function App() {
               <Route path="/system">
                 <Route path="fav" element={<SystemFavPage />} />
                 <Route path="scene" element={<SystemScenePage />} />
+                <Route path="character" element={<SystemCharacterPage />} />
                 <Route path="account" element={<SystemAccountPage />} />
               </Route>
               <Route path="/give">
