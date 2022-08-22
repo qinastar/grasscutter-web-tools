@@ -68,6 +68,7 @@
     "craco-antd": "^2.0.0",
     "eslint": "^8.20.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "webpackbar": "^5.0.2"
   }
 }

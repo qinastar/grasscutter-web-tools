@@ -3,6 +3,9 @@ module.exports = {
     'eslint:recommended',
     'airbnb'
   ],
+  plugins: [
+    'react-hooks'
+  ],
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2020,

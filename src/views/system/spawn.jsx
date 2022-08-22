@@ -29,7 +29,7 @@ function SpawnPage() {
 
   const calculatedCommand = useMemo(() => {
     if (!itemCode) return '';
-    return `/spawn${forUserId ? ` @${forUserId}` : ''} ${itemCode} ${itemCount} lv${itemLevel}`;
+    return `/spawn${forUserId ? ` @${forUserId}` : ''} ${itemCode} ${itemCount} ${itemLevel}`;
   }, [
     forUserId,
     itemCode,

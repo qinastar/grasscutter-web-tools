@@ -266,7 +266,7 @@ function SystemCharacterPage() {
           <Form.Item label="元素爆发(Q)">
             <Space>
               <InputNumber min={1} max={15} value={talentQ} onChange={(val) => setTalentQ(val)} />
-              <Button disabled={!isWSConnected} type="primary" onClick={sendCommand(`/talent${talentTo ? ` @${talentTo}` : ''} q${talentQ}`)}>设置</Button>
+              <Button disabled={!isWSConnected} type="primary" onClick={sendCommand(`/talent${talentTo ? ` @${talentTo}` : ''} q ${talentQ}`)}>设置</Button>
             </Space>
           </Form.Item>
         </Form>
